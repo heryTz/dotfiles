@@ -1,2 +1,1 @@
 # Hery Nirintsoa's nvim
-
