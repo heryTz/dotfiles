@@ -1,0 +1,11 @@
+/*
+!.gitignore
+!/nvim
+!/nvchad
+!/alacritty
+!/zellij
+!/tmux
+!/nvim-lazy
+!Makefile
+!.my-zshrc
+!README.md
