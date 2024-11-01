@@ -16,6 +16,14 @@ return {
 	end,
 	config = function()
 		require("luasnip.loaders.from_vscode").lazy_load()
+		local luasnip = require("luasnip")
+
+		vim.keymap.set({ "i", "s" }, "<C-L>", function()
+			luasnip.jump(1)
+		end, { silent = true })
+		vim.keymap.set({ "i", "s" }, "<C-H>", function()
+			luasnip.jump(-1)
+		end, { silent = true })
 
 		local cmp = require("cmp")
 
