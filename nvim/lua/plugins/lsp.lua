@@ -1,4 +1,4 @@
-local lsp_lists = { "lua_ls", "ts_ls", "jsonls" }
+local lsp_lists = { "lua_ls", "ts_ls", "jsonls", "eslint" }
 
 return {
 	{
