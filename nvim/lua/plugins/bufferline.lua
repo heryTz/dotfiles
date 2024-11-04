@@ -28,7 +28,6 @@ return {
 		)
 		vim.keymap.set("n", "<leader>bh", ":BufferLineCloseLeft<CR>", { desc = "Close All Left Buffer", silent = true })
 		vim.keymap.set("n", "<leader>bo", ":BufferLineCloseOthers<CR>", { desc = "Close All Buffer", silent = true })
-		vim.keymap.set("n", "<leader>bd", ":bdelete<CR>", { desc = "Close Buffer", silent = true })
-		vim.keymap.set("n", "<leader>ba", ":bufdo bd<CR>", { desc = "Close All Buffer", silent = true })
+		vim.keymap.set("n", "<leader>bd", ":bdelete<CR>", { desc = "Delete Buffer", silent = true })
 	end,
 }
