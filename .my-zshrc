@@ -3,3 +3,5 @@ alias nvim-lazy='NVIM_APPNAME=nvim-lazy nvim'
 
 export XDG_CONFIG_HOME="$HOME/.config"
 
+export PATH="$PATH:$HOME/prog/third/silicon"
+
