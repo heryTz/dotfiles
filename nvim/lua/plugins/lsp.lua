@@ -1,4 +1,4 @@
-local lsp_lists = { "lua_ls", "ts_ls", "jsonls", "eslint" }
+local lsp_lists = { "lua_ls", "ts_ls", "jsonls", "tailwindcss", "cssls", "css_variables", "html", "eslint" }
 
 return {
 	{
