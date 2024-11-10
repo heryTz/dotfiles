@@ -17,10 +17,14 @@ return {
 				"bash",
 				"json",
 				"css",
+				"php",
 			},
+			ignore_install = {},
+			auto_install = true,
 			sync_install = false,
 			highlight = { enable = true },
 			indent = { enable = true },
+			modules = {},
 		})
 	end,
 }
