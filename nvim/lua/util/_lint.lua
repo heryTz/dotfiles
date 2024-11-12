@@ -1,7 +1,7 @@
 local M = {}
 
 M.has_eslint_config = function()
-	local root_files = { ".eslintrc", ".eslintrc.json", ".eslintrc.js", "package.json" }
+	local root_files = { ".eslintrc", ".eslintrc.json", ".eslintrc.js", "eslint.config.mjs", "package.json" }
 	for _, filename in pairs(root_files) do
 		if vim.fn.filereadable(vim.fn.getcwd() .. "/" .. filename) == 1 then
 			if filename == "package.json" then
