@@ -1,4 +1,19 @@
-local lsp_lists = { "lua_ls", "ts_ls", "jsonls", "tailwindcss", "cssls", "css_variables", "html", "eslint", "phpactor" }
+local lsp_lists = {
+	"lua_ls",
+	"ts_ls",
+	"jsonls",
+	"tailwindcss",
+	"cssls",
+	"css_variables",
+	"html",
+	"eslint",
+	"phpactor",
+}
+
+local mason_tool = {
+	"prettierd",
+	"stylua",
+}
 
 return {
 	{
@@ -19,7 +34,7 @@ return {
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		config = function()
 			require("mason-tool-installer").setup({
-				ensure_installed = { "eslint_d", "prettierd", "stylua" },
+				ensure_installed = mason_tool,
 			})
 		end,
 	},
