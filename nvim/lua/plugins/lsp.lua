@@ -8,6 +8,7 @@ local lsp_lists = {
 	"html",
 	"eslint",
 	"phpactor",
+	"prismals",
 }
 
 local mason_tool = {

@@ -18,6 +18,7 @@ return {
 				"json",
 				"css",
 				"php",
+				"prisma",
 			},
 			ignore_install = {},
 			auto_install = true,
