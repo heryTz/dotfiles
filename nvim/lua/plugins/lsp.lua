@@ -52,6 +52,12 @@ return {
 				})
 			end
 
+			-- https://github.com/neovim/nvim-lspconfig/issues/1427#issuecomment-980842735
+			lspconfig.eslint.setup({
+				capabilities = capabilities,
+				root_dir = require("lspconfig.util").find_git_ancestor,
+			})
+
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(args)
 					vim.keymap.set(
