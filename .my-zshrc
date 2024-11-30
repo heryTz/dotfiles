@@ -6,4 +6,5 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 
 export PATH="$PATH:$HOME/prog/third/silicon"
 export PATH="$PATH:$HOME/prog/third/phpcs"
+export PATH="$PATH:$HOME/prog/third/nvim-macos-X86_64/bin"
 

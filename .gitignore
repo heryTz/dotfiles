@@ -5,6 +5,7 @@
 !/alacritty
 !/zellij
 !/tmux
+!/lazygit
 !Makefile
 !.my-zshrc
 !README.md
