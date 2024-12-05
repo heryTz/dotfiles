@@ -9,11 +9,15 @@ local lsp_lists = {
 	"eslint",
 	"phpactor",
 	"prismals",
+	"helm_ls",
+	"yamlls",
 }
 
 local mason_tool = {
 	"prettierd",
 	"stylua",
+	"helm-ls",
+	"yamlls",
 }
 
 return {
@@ -56,6 +60,16 @@ return {
 			lspconfig.eslint.setup({
 				capabilities = capabilities,
 				root_dir = require("lspconfig.util").find_git_ancestor,
+			})
+
+			lspconfig.helm_ls.setup({
+				settings = {
+					["helm-ls"] = {
+						yamlls = {
+							path = "yaml-language-server",
+						},
+					},
+				},
 			})
 
 			vim.api.nvim_create_autocmd("LspAttach", {

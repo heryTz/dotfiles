@@ -19,6 +19,8 @@ return {
 				"css",
 				"php",
 				"prisma",
+				"helm",
+				"gotmpl",
 			},
 			ignore_install = {},
 			auto_install = true,
