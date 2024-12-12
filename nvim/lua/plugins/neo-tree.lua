@@ -24,6 +24,7 @@ return {
 				always_show_by_pattern = {
 					".env*",
 					".dockerignore",
+					".husky",
 				},
 			},
 		},
