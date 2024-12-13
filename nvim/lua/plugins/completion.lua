@@ -5,7 +5,6 @@ return {
 		"hrsh7th/cmp-path",
 		"L3MON4D3/LuaSnip",
 		"saadparwaiz1/cmp_luasnip",
-		"rafamadriz/friendly-snippets",
 	},
 	opts = function(_, opts)
 		opts.sources = opts.sources or {}
@@ -15,18 +14,7 @@ return {
 		})
 	end,
 	config = function()
-		require("luasnip.loaders.from_vscode").lazy_load()
-		local luasnip = require("luasnip")
-
-		vim.keymap.set({ "i", "s" }, "<C-L>", function()
-			luasnip.jump(1)
-		end, { silent = true })
-		vim.keymap.set({ "i", "s" }, "<C-H>", function()
-			luasnip.jump(-1)
-		end, { silent = true })
-
 		local cmp = require("cmp")
-
 		local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
 		cmp.setup({
@@ -47,12 +35,25 @@ return {
 				["<CR>"] = cmp.mapping.confirm({ select = true }),
 			}),
 			sources = cmp.config.sources({
-				{ name = "nvim_lsp" },
 				{ name = "luasnip" },
+				{ name = "nvim_lsp" },
 				{ name = "path" },
 			}, {
 				{ name = "buffer" },
 			}),
+			formatting = {
+				fields = { "abbr", "kind", "menu" },
+				expandable_indicator = true,
+				format = function(entry, vim_item)
+					vim_item.menu = ({
+						nvim_lsp = "[lsp]",
+						luasnip = "[snip]",
+						path = "[path]",
+						buffer = "[buf]",
+					})[entry.source.name]
+					return vim_item
+				end,
+			},
 		})
 	end,
 }

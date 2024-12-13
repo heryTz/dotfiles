@@ -11,6 +11,7 @@ local lsp_lists = {
 	"prismals",
 	"helm_ls",
 	"yamlls",
+	"gopls",
 }
 
 local mason_tool = {

@@ -21,6 +21,7 @@ return {
 				"prisma",
 				"helm",
 				"gotmpl",
+				"go",
 			},
 			ignore_install = {},
 			auto_install = true,
