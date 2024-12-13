@@ -64,11 +64,21 @@ return {
 			})
 
 			lspconfig.helm_ls.setup({
+				capabilities = capabilities,
 				settings = {
 					["helm-ls"] = {
 						yamlls = {
 							path = "yaml-language-server",
 						},
+					},
+				},
+			})
+
+			lspconfig.gopls.setup({
+				capabilities = capabilities,
+				settings = {
+					gopls = {
+						completeUnimported = true,
 					},
 				},
 			})
