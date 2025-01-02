@@ -5,6 +5,7 @@ return {
 	},
 	config = function()
 		local ls = require("luasnip")
+		require("../snippets/js")
 		require("luasnip.loaders.from_vscode").lazy_load()
 
 		vim.keymap.set({ "i", "s" }, "<C-L>", function()
@@ -13,19 +14,5 @@ return {
 		vim.keymap.set({ "i", "s" }, "<C-H>", function()
 			ls.jump(-1)
 		end, { silent = true })
-
-		-- local s = ls.snippet
-		-- local t = ls.text_node
-		-- local i = ls.insert_node
-		--
-		-- ls.snippets = {
-		-- 	all = {
-		-- 		s("hery", {
-		-- 			t('Hello from "hery"'),
-		-- 			i(1),
-		-- 			t("world"),
-		-- 		}),
-		-- 	},
-		-- }
 	end,
 }
