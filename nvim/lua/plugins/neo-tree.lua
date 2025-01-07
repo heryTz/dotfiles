@@ -25,6 +25,7 @@ return {
 					".env*",
 					".dockerignore",
 					".husky",
+					".prettierignore",
 				},
 			},
 		},
