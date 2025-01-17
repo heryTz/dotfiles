@@ -8,6 +8,9 @@ return {
 			{ "nvim-lua/plenary.nvim" },
 		},
 		build = "make tiktoken",
+		init = function()
+			vim.g.copilot_workspace_folders = { vim.fn.getcwd() }
+		end,
 		config = function()
 			local chat = require("CopilotChat")
 
@@ -20,8 +23,8 @@ return {
 				},
 			})
 
-			vim.keymap.set("n", "<leader>aiv", chat.toggle, { noremap = true, silent = true })
-			vim.keymap.set("n", "<leader>aif", function()
+			vim.keymap.set({ "n", "v" }, "<leader>aiv", chat.toggle, { noremap = true, silent = true })
+			vim.keymap.set({ "n", "v" }, "<leader>aif", function()
 				chat.open({
 					window = {
 						layout = "float",
