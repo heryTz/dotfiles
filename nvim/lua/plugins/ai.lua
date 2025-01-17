@@ -10,6 +10,7 @@ return {
 		build = "make tiktoken",
 		config = function()
 			local chat = require("CopilotChat")
+
 			chat.setup({
 				mappings = {
 					reset = {
@@ -19,7 +20,14 @@ return {
 				},
 			})
 
-			vim.keymap.set("n", "<leader>ai", chat.toggle, { noremap = true, silent = true })
+			vim.keymap.set("n", "<leader>aiv", chat.toggle, { noremap = true, silent = true })
+			vim.keymap.set("n", "<leader>aif", function()
+				chat.open({
+					window = {
+						layout = "float",
+					},
+				})
+			end, { silent = true })
 		end,
 	},
 }
