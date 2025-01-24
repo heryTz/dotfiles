@@ -5,10 +5,17 @@ return {
 		dependencies = { "nvim-lua/plenary.nvim" },
 		init = function()
 			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "<leader> ", builtin.find_files, { desc = "Telescope find files" })
-			vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
-			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
-			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
+			vim.keymap.set("n", "<leader> ", builtin.find_files)
+			vim.keymap.set("n", "<leader>fg", builtin.live_grep)
+			vim.keymap.set("n", "<leader>fb", builtin.buffers)
+			vim.keymap.set("n", "<leader>fh", builtin.help_tags)
+			vim.keymap.set("", "<leader>fm", require("custom-plugins.multigrep").multigrep)
+			vim.keymap.set("n", "<leader>fp", function()
+				builtin.find_files({
+					---@diagnostic disable-next-line: param-type-mismatch
+					cwd = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy"),
+				})
+			end)
 		end,
 	},
 	{
