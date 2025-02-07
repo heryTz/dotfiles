@@ -57,6 +57,8 @@ return {
 				})
 			end
 
+			lspconfig.clangd.setup({})
+
 			-- https://github.com/neovim/nvim-lspconfig/issues/1427#issuecomment-980842735
 			lspconfig.eslint.setup({
 				capabilities = capabilities,

@@ -22,6 +22,7 @@ return {
 				"helm",
 				"gotmpl",
 				"go",
+				"c",
 			},
 			ignore_install = {},
 			auto_install = true,
