@@ -9,6 +9,8 @@ return {
 				typescript = { "prettierd" },
 				typescriptreact = { "prettierd" },
 				go = { "gofmt" },
+				-- Sometimes, vue format is not working properly
+				vue = { "prettierd" },
 			},
 			format_on_save = {
 				timeout_ms = 500,
