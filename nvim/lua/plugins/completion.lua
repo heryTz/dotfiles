@@ -1,5 +1,8 @@
 return {
 	"hrsh7th/nvim-cmp",
+	-- Specify a specific tag to avoid this issues
+	-- https://github.com/hrsh7th/nvim-cmp/issues/2155#issuecomment-2768573353
+	tag = "v0.0.2",
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		"hrsh7th/cmp-path",
