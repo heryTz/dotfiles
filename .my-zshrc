@@ -8,6 +8,7 @@ export PATH="$PATH:$HOME/prog/third/silicon"
 export PATH="$PATH:$HOME/prog/third/phpcs"
 export PATH="$PATH:$HOME/prog/third/nvim-macos-X86_64/bin"
 export PATH="$PATH:$HOME/prog/third/dagger"
-export PATH="$PATH:$HOME/third/LLVM-19.1.7-Linux-X64/bin"
 export PATH="$PATH:$HOME/prog/third/llvm-project/build/bin"
+export PATH="$PATH:$HOME/prog/third/go/bin"
 
+export PATH="$PATH:$HOME/third/LLVM-19.1.7-Linux-X64/bin"
