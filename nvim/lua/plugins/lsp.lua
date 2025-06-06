@@ -91,7 +91,7 @@ return {
 				},
 				on_new_config = function(new_config, new_root_dir)
 					if new_root_dir then
-						local gopls_config_path = new_root_dir .. "/gopls.json"
+						local gopls_config_path = new_root_dir .. "/.nvim/gopls.json"
 						local file = io.open(gopls_config_path, "r")
 						if file then
 							local data = file:read("*a")
