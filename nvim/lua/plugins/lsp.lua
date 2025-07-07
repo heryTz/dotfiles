@@ -25,11 +25,9 @@ local lsp = {
 
 return {
 	"neovim/nvim-lspconfig",
-	dependencies = {
-		"hrsh7th/cmp-nvim-lsp",
-	},
+	dependencies = { "saghen/blink.cmp" },
 	config = function()
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 		for _, lsp_name in ipairs(lsp) do
 			vim.lsp.enable(lsp_name)
