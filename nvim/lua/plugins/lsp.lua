@@ -37,13 +37,6 @@ return {
 			capabilities = capabilities,
 		})
 
-		require("../lsp_config/lua_ls").setup()
-		require("../lsp_config/ts_ls").setup()
-		require("../lsp_config/tailwindcss").setup()
-		require("../lsp_config/cssls").setup()
-		require("../lsp_config/css_variables").setup()
-		require("../lsp_config/gopls").setup()
-
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
 				vim.keymap.set("n", "gd", require("telescope.builtin").lsp_definitions, { desc = "Goto Definition" })
