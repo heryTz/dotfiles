@@ -14,15 +14,6 @@ local lsp = {
 	-- "yamlls",
 }
 
--- local mason_tool = {
--- 	"prettierd",
--- 	"stylua",
--- 	"helm-ls",
--- 	"yamlls",
--- 	"vue_ls",
--- }
---
-
 return {
 	"neovim/nvim-lspconfig",
 	dependencies = { "saghen/blink.cmp" },

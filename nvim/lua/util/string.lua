@@ -1,8 +1,8 @@
 local M = {}
 
--- Convert a string to camelcase
--- @param str string
--- @return string
+--- Convert a string to camelcase
+--- @param str string
+--- @return string
 M.toPascalCase = function(str)
 	str = string.gsub(str, "%W", " ")
 	str = string.gsub(str, "(%s+%l)", function(word)

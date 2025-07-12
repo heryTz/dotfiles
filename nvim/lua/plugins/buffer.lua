@@ -1,0 +1,54 @@
+return {
+	{
+		"ojroques/nvim-bufdel",
+		config = function()
+			require("bufdel").setup({
+				next = "tabs",
+				quit = false,
+			})
+			vim.keymap.set("n", "<leader>bd", ":BufDel<CR>", { desc = "Delete Buffer", silent = true })
+		end,
+	},
+	{
+		"akinsho/bufferline.nvim",
+		depedencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+		config = function()
+			require("bufferline").setup({
+				options = {
+					offsets = {
+						{
+							filetype = "neo-tree",
+							text = "File Explorer",
+							text_align = "left",
+							highlight = "Directory",
+							separator = true,
+						},
+					},
+				},
+			})
+
+			vim.keymap.set("n", "<S-h>", ":BufferLineCyclePrev<CR>", { desc = "Goto Prev Buffer", silent = true })
+			vim.keymap.set("n", "<S-l>", ":BufferLineCycleNext<CR>", { desc = "Goto Next Buffer", silent = true })
+			vim.keymap.set(
+				"n",
+				"<leader>bl",
+				":BufferLineCloseRight<CR>",
+				{ desc = "Close All Right Buffer", silent = true }
+			)
+			vim.keymap.set(
+				"n",
+				"<leader>bh",
+				":BufferLineCloseLeft<CR>",
+				{ desc = "Close All Left Buffer", silent = true }
+			)
+			vim.keymap.set(
+				"n",
+				"<leader>bo",
+				":BufferLineCloseOthers<CR>",
+				{ desc = "Close All Buffer", silent = true }
+			)
+		end,
+	},
+}
