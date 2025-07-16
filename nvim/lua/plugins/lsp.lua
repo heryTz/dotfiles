@@ -1,17 +1,10 @@
 local lsp = {
 	"lua_ls",
-	"ts_ls",
 	"tailwindcss",
 	"eslint",
 	"cssls",
 	"css_variables",
 	"gopls",
-	-- "jsonls",
-	-- "html",
-	-- "phpactor",
-	-- "prismals",
-	-- "helm_ls",
-	-- "yamlls",
 }
 
 return {
@@ -20,13 +13,16 @@ return {
 	config = function()
 		local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-		for _, lsp_name in ipairs(lsp) do
-			vim.lsp.enable(lsp_name)
-		end
-
-		vim.lsp.config("*", {
+		require("custom-plugins.ts_lsp").setup({
 			capabilities = capabilities,
 		})
+
+		for _, lsp_name in ipairs(lsp) do
+			vim.lsp.enable(lsp_name)
+			vim.lsp.config(lsp_name, {
+				capabilities = capabilities,
+			})
+		end
 
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
