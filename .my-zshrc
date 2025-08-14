@@ -1,5 +1,8 @@
 alias lzd='lazydocker'
 alias nvim-lazy='NVIM_APPNAME=nvim-lazy nvim'
+alias gfp='git fetch origin --prune'
+alias p='pnpm'
+alias doc='docker compose'
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export HOMEBREW_NO_AUTO_UPDATE=1
