@@ -1,5 +1,36 @@
 os:
   editPreset: "nvim"
+
 git:
   merging:
     args: "--no-ff"
+
+keybinding:
+  branches:
+    mergeIntoCurrentBranch: <disabled>
+
+customCommands:
+  - key: "F"
+    context: "files"
+    description: "Fetch and prune"
+    command: "git fetch --all --prune"
+    loadingText: "Fetching and pruning"
+  - key: "M"
+    context: "localBranches"
+    description: "Merge branch"
+    prompts:
+      - type: "menu"
+        title: "What kind of merge is it?"
+        key: "MergeOptions"
+        options:
+          - name: "--ff-only"
+            description: "Fast-forward only"
+            value: "--ff-only"
+          - name: "--no-ff"
+            description: "No fast-forward"
+            value: "--no-ff --no-edit"
+          - name: "--squash"
+            description: "Squash commits - Combine commits into a single that you will edit"
+            value: "--squash"
+    command: "git merge {{.SelectedLocalBranch.Name}} {{.Form.MergeOptions}}"
+    loadingText: "Merge branch"
