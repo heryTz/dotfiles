@@ -9,7 +9,17 @@ return {
 		appearance = {
 			nerd_font_variant = "mono",
 		},
-		completion = { documentation = { auto_show = false } },
+		completion = {
+			menu = {
+				border = "rounded",
+			},
+			documentation = {
+				auto_show = false,
+				window = {
+					border = "rounded",
+				},
+			},
+		},
 		sources = {
 			default = { "lsp", "path", "snippets", "buffer" },
 		},

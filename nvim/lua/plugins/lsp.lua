@@ -34,7 +34,11 @@ return {
 					require("telescope.builtin").lsp_type_definitions,
 					{ desc = "Goto Type Definition" }
 				)
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
+				vim.keymap.set("n", "K", function()
+					vim.lsp.buf.hover({
+						border = "rounded",
+					})
+				end, { desc = "Hover" })
 				vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, { desc = "Signature Help" })
 				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
 				vim.keymap.set(
