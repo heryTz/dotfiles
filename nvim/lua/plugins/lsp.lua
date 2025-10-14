@@ -5,6 +5,7 @@ local lsp = {
 	"cssls",
 	"css_variables",
 	"gopls",
+	"jsonls",
 }
 
 return {
