@@ -8,6 +8,9 @@ local M = {}
 M.setup = function(params)
 	local capabilities = params.capabilities
 
+	-- Mason like registry ^^
+	local registry_path = vim.fn.expand("~/prog/third/nvim-registry")
+
 	vim.lsp.config("vtsls", {
 		capabilities = capabilities,
 		settings = {
@@ -16,7 +19,8 @@ M.setup = function(params)
 					globalPlugins = {
 						{
 							name = "@vue/typescript-plugin",
-							location = "/usr/local/lib/node_modules/@vue/language-server",
+							location = registry_path
+								.. "/packages/vue-language-server/node_modules/@vue/language-server",
 							languages = { "vue" },
 							configNamespace = "typescript",
 						},
