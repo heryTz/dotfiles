@@ -6,6 +6,7 @@
 !/zellij
 !/tmux
 !/lazygit
+!/hypr
 !Makefile
 !.my-zshrc
 !README.md
