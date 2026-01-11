@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+options="🖼 Fullscreen\n🔲 Select Region\n❌ Cancel"
+
+choice=$(echo -e "$options" | rofi -dmenu -p "Screenshot")
+
+file=~/Pictures/Screenshots/screenshot_$(date +%Y%m%d_%H%M%S).png
+
+case "$choice" in
+  *Fullscreen)
+    grim "$file"
+    notify-send "Screenshot saved" "$file"
+    ;;
+  *Region)
+    grim -g "$(slurp)" "$file" && swappy -f "$file"
+    ;;
+  *Cancel)
+    exit 0
+    ;;
+esac

@@ -7,6 +7,10 @@
 !/tmux
 !/lazygit
 !/hypr
+!/waybar
+!/rofi
+!/swappy
+!/mako
 !Makefile
 !.my-zshrc
 !README.md
