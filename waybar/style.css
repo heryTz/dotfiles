@@ -54,10 +54,10 @@
 }
 
 #workspaces button {
-  color: #babbf1;
+  color: #c6d0f5;
   border-radius: 5px;
   /* Workspaces buttons are always rounded */
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.7rem;
   background: transparent;
   transition: all 0.2s ease-in-out;
   border: none;
@@ -91,7 +91,7 @@
 
 /* Simple Hover effect for clock module - BRIGHTER COLOR */
 #clock:hover {
-  background-color: rgba(153, 209, 219, 0.1);
+  background-color: rgb(41, 42, 53);
   /* Brighter highlight */
 }
 
@@ -112,7 +112,7 @@
   /* Ensure no default outline */
   /* Transition for background-color, color, outline, and box-shadow for smooth effect */
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, outline 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  color: #babbf1;
+  color: #c6d0f5;
   /* A calm color, consistent with custom-uptime */
   font-weight: 600;
   /* Slightly bolder for the timer, consistent with clock */
@@ -194,7 +194,7 @@
 }
 
 #custom-uptime {
-  color: #babbf1;
+  color: #c6d0f5;
 }
 
 #cpu {
@@ -202,7 +202,7 @@
 }
 
 #clock {
-  color: #99d1db;
+  color: #c6d0f5;
   font-weight: 500;
 }
 
@@ -223,7 +223,7 @@
 }
 
 #custom-lock {
-  color: #babbf1;
+  color: #c6d0f5;
 }
 
 #bluetooth {
@@ -240,8 +240,7 @@
 }
 
 #battery {
-  color: #99d1db;
-  ;
+  color: #c6d0f5;
 }
 
 #battery.charging {
