@@ -6,6 +6,7 @@ local lsp = {
 	"css_variables",
 	"gopls",
 	"jsonls",
+	"biome",
 }
 
 return {
