@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DIR/rofi-screenshot"
+
+file="$DIR/debug_screenshot.png"
+
+tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+win=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+grim -g "$win" "$tmpfile"
+
+round_corners "$tmpfile"
+add_gradient_bg "$tmpfile" "$file"
+rm "$tmpfile"
+add_branding "$file"
+echo "Debug screenshot saved to: $file"

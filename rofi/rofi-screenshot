@@ -1,18 +1,189 @@
 #!/usr/bin/env bash
 
-options="🖼 Fullscreen\n🔲 Select Region\n❌ Cancel"
+# Round corners of an image in-place to match Hyprland rounding = 6.
+# Args: <file.png>
+round_corners() {
+  local file="$1" r=6
+  magick "$file" \
+    \( +clone -alpha extract \
+       -draw "fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0" \
+       \( +clone -flip \) -compose Multiply -composite \
+       \( +clone -flop \) -compose Multiply -composite \
+    \) \
+    -alpha off -compose CopyOpacity -composite \
+    "$file"
+}
 
+# Composite a pastel gradient background behind a shadow-padded image.
+# Args: <input.png> <output.png>
+add_gradient_bg() {
+  local input="$1" output="$2"
+  local shadowfile
+  shadowfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+
+  # Add shadow with padding
+  magick \
+    \( "$input" -bordercolor none -border 30 \) \
+    \( +clone -background black -shadow 80x20+0+15 \) \
+    +swap -background none -layers merge +repage \
+    "$shadowfile"
+
+  # macOS Tahoe gradient (sky → lake surface → deep water → pine shadow)
+  local sw sh w h hw hh padding=10
+  sw=$(magick identify -format "%w" "$shadowfile")
+  sh=$(magick identify -format "%h" "$shadowfile")
+  w=$((sw + padding * 2))
+  h=$((sh + padding * 2))
+  hw=$((w / 2))
+  hh=$((h / 2))
+  magick -size "${w}x${h}" xc: \
+    -sparse-color Shepards \
+      "0,0 #e8f4fc  ${w},0 #b3d9f0  ${hw},0 #6ab8e4  ${hw},${hh} #3a9acf  0,${h} #1e7ab5  ${w},${h} #0d5a8a" \
+    -blur 0x50 \
+    "$shadowfile" -gravity center -composite \
+    "$output"
+
+  rm "$shadowfile"
+}
+
+# Composite a branded signature (circular avatar + name) onto the bottom-right.
+# Args: <file.png>
+add_branding() {
+  local file="$1"
+  local avatar_src="$HOME/.config/rofi/profile.png"
+  local size=36    # avatar circle diameter
+  local border=2   # gradient ring thickness
+  local total=$((size + border * 2))
+  local half_t=$((total / 2))
+  local half_s=$((size / 2))
+  local gap=10  pad_y=12
+  # pad_x = pad_y so avatar circle is inscribed flush in the pill's left cap
+  local pad_x=$pad_y
+  local name="Hery Nirintsoa"  font_size=17
+
+  local tmp_avatar tmp_disc tmp_ring tmp_text tmp_brand
+  tmp_avatar=$(mktemp /tmp/av_XXXXXX.png)
+  tmp_disc=$(mktemp /tmp/disc_XXXXXX.png)
+  tmp_ring=$(mktemp /tmp/ring_XXXXXX.png)
+  tmp_text=$(mktemp /tmp/text_XXXXXX.png)
+  tmp_brand=$(mktemp /tmp/brand_XXXXXX.png)
+
+  # Circular crop of avatar
+  magick "$avatar_src" \
+    -resize "${size}x${size}^" -gravity center -extent "${size}x${size}" \
+    \( +clone -alpha extract \
+       -fill black -colorize 100 \
+       -fill white -draw "circle ${half_s},${half_s} ${half_s},0" \
+    \) \
+    -alpha off -compose CopyOpacity -composite \
+    "$tmp_avatar"
+
+  # Gradient disc with circular mask → visible ring border around the avatar
+  magick -size "${total}x${total}" xc: \
+    -sparse-color Shepards \
+      "0,0 #c8e8fa  ${total},0 #7ec5ec  0,${total} #4aa8d8  ${total},${total} #2080b8" \
+    -blur 0x6 \
+    \( +clone -alpha extract \
+       -fill black -colorize 100 \
+       -fill white -draw "circle ${half_t},${half_t} ${half_t},0" \
+    \) \
+    -alpha off -compose CopyOpacity -composite \
+    "$tmp_disc"
+
+  # Overlay circular avatar onto gradient disc → ringed avatar
+  magick "$tmp_disc" "$tmp_avatar" -gravity center -compose Over -composite "$tmp_ring"
+  rm "$tmp_avatar" "$tmp_disc"
+
+  # White text label
+  magick -background none -fill white \
+    -font "JetBrainsMono-NF-Bold" -pointsize "$font_size" \
+    label:"$name" "$tmp_text"
+  local text_w text_h
+  text_w=$(magick identify -format "%w" "$tmp_text")
+  text_h=$(magick identify -format "%h" "$tmp_text")
+
+  # Build branding strip: semi-transparent pill + avatar + name
+  local strip_w=$(( pad_x + total + gap + text_w + pad_x ))
+  local strip_h=$(( total + pad_y * 2 ))
+  local text_x=$(( pad_x + total + gap ))
+  local text_y=$(( (strip_h - text_h) / 2 ))
+  local pill_r=$(( strip_h / 2 ))
+
+  magick -size "${strip_w}x${strip_h}" xc:none \
+    -fill "rgba(0,0,0,0.42)" \
+    -draw "roundrectangle 0,0 $((strip_w - 1)),$((strip_h - 1)) ${pill_r},${pill_r}" \
+    "$tmp_ring" -geometry "+${pad_x}+${pad_y}" -composite \
+    "$tmp_text" -geometry "+${text_x}+${text_y}" -composite \
+    "$tmp_brand"
+  rm "$tmp_ring" "$tmp_text"
+
+  magick "$file" "$tmp_brand" -gravity SouthEast -geometry "+12+12" -composite "$file"
+  rm "$tmp_brand"
+}
+
+# Open processed image in an editor, save to file, notify, and clean up.
+# Args: <processed.png> <output.png>
+edit() {
+  local processed="$1" file="$2"
+  swappy -f "$processed" -o "$file"
+  [[ -f "$file" ]] && notify-send "Screenshot saved" "$file"
+  rm -f "$processed"
+}
+
+[[ "${BASH_SOURCE[0]}" != "${0}" ]] && return
+
+options="🖼 Fullscreen [Branded]\n🔲 Select Region [Branded]\n🪟 Window [Branded]\n🖼 Fullscreen\n🔲 Select Region\n🪟 Window\n❌ Cancel"
 choice=$(echo -e "$options" | rofi -dmenu -p "Screenshot")
-
 file=~/Pictures/Screenshots/screenshot_$(date +%Y%m%d_%H%M%S).png
 
 case "$choice" in
-  *Fullscreen)
-    grim "$file"
-    notify-send "Screenshot saved" "$file"
+  "🖼 Fullscreen [Branded]")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    processed=$(mktemp /tmp/screenshot_XXXXXX.png)
+    grim "$tmpfile"
+    round_corners "$tmpfile"
+    add_gradient_bg "$tmpfile" "$processed"
+    rm "$tmpfile"
+    add_branding "$processed"
+    edit "$processed" "$file"
     ;;
-  *Region)
-    grim -g "$(slurp)" "$file" && swappy -f "$file"
+  "🔲 Select Region [Branded]")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    processed=$(mktemp /tmp/screenshot_XXXXXX.png)
+    grim -g "$(slurp)" "$tmpfile"
+    round_corners "$tmpfile"
+    add_gradient_bg "$tmpfile" "$processed"
+    rm "$tmpfile"
+    add_branding "$processed"
+    edit "$processed" "$file"
+    ;;
+  "🪟 Window [Branded]")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    processed=$(mktemp /tmp/screenshot_XXXXXX.png)
+    win=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+    grim -g "$win" "$tmpfile"
+    round_corners "$tmpfile"
+    add_gradient_bg "$tmpfile" "$processed"
+    rm "$tmpfile"
+    add_branding "$processed"
+    edit "$processed" "$file"
+    ;;
+  "🖼 Fullscreen")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    grim "$tmpfile"
+    edit "$tmpfile" "$file"
+    ;;
+  "🔲 Select Region")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    grim -g "$(slurp)" "$tmpfile"
+    edit "$tmpfile" "$file"
+    ;;
+  "🪟 Window")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    win=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+    grim -g "$win" "$tmpfile"
+    round_corners "$tmpfile"
+    edit "$tmpfile" "$file"
     ;;
   *Cancel)
     exit 0
