@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$DIR/rofi-screenshot"
+source "$DIR/../branding/lib.sh"
 
 file="$DIR/debug_screenshot.png"
 

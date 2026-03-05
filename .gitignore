@@ -11,7 +11,9 @@
 !/rofi
 !/swappy
 !/mako
+!/branding
 !Makefile
 !.my-zshrc
 !README.md
 !CLAUDE.md
+!docs

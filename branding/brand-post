@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DIR/lib.sh"
+
+usage() {
+  cat <<EOF
+Usage: brand-post [OPTIONS] "Title text"
+
+Options:
+  -o <path>    Output file (default: ~/Pictures/Posts/post_<timestamp>.png)
+  --no-open    Skip opening result in swappy
+  -h, --help   Show this help
+
+Title must be 66 characters or fewer.
+EOF
+  exit 1
+}
+
+output=""
+no_open=false
+title=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -o) output="$2"; shift 2 ;;
+    --no-open) no_open=true; shift ;;
+    -h|--help) usage ;;
+    -*) echo "Unknown option: $1"; usage ;;
+    *) title="$1"; shift ;;
+  esac
+done
+
+[[ -z "$title" ]] && { echo "Error: title text is required."; usage; }
+
+if [[ ${#title} -gt 66 ]]; then
+  echo "Error: title is ${#title} characters (max 66)."
+  exit 1
+fi
+
+if [[ -z "$output" ]]; then
+  mkdir -p ~/Pictures/Posts
+  output=~/Pictures/Posts/post_$(date +%Y%m%d_%H%M%S).png
+fi
+
+tmpfile=$(mktemp /tmp/post_XXXXXX.png)
+trap 'rm -f "$tmpfile"' EXIT
+
+add_title_post "$title" "$tmpfile"
+
+if $no_open; then
+  cp "$tmpfile" "$output"
+  [[ -f "$output" ]] && notify-send "Post image saved" "$output"
+else
+  swappy -f "$tmpfile" -o "$output"
+  [[ -f "$output" ]] && notify-send "Post image saved" "$output"
+fi

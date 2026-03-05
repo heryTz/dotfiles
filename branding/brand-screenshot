@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DIR/lib.sh"
+
+usage() {
+  echo "Usage: brand-screenshot <input.png> <output.png>"
+  exit 1
+}
+
+[[ $# -ne 2 ]] && usage
+
+input="$1"
+output="$2"
+
+[[ ! -f "$input" ]] && { echo "Error: input file not found: $input"; exit 1; }
+
+tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+trap 'rm -f "$tmpfile"' EXIT
+cp "$input" "$tmpfile"
+
+round_corners "$tmpfile"
+add_gradient_bg "$tmpfile" "$output"
+add_branding "$output"
