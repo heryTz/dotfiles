@@ -27,6 +27,9 @@ return {
 					end
 				end
 			end
+
+			local project_vscode_snip = project_root .. "/.vscode/snippets"
+			require("luasnip.loaders.from_vscode").lazy_load({ paths = { project_vscode_snip } })
 		end
 
 		vim.keymap.set({ "i", "s" }, "<C-L>", function()
