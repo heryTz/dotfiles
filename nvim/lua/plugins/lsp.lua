@@ -28,27 +28,17 @@ return {
 
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
-				vim.keymap.set("n", "gd", require("telescope.builtin").lsp_definitions, { desc = "Goto Definition" })
-				vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references, { desc = "Goto References" })
-				vim.keymap.set(
-					"n",
-					"gt",
-					require("telescope.builtin").lsp_type_definitions,
-					{ desc = "Goto Type Definition" }
-				)
+				vim.keymap.set("n", "gd", require("telescope.builtin").lsp_definitions)
+				vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
+				vim.keymap.set("n", "gt", require("telescope.builtin").lsp_type_definitions)
 				vim.keymap.set("n", "K", function()
 					vim.lsp.buf.hover({
 						border = "rounded",
 					})
-				end, { desc = "Hover" })
-				vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, { desc = "Signature Help" })
-				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
-				vim.keymap.set(
-					"n",
-					"<leader>sym",
-					require("telescope.builtin").lsp_document_symbols,
-					{ desc = "Document Symbols" }
-				)
+				end)
+				vim.keymap.set("n", "gK", vim.lsp.buf.signature_help)
+				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action)
+				vim.keymap.set("n", "<leader>sym", require("telescope.builtin").lsp_document_symbols)
 
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
 				if client == nil then
@@ -56,20 +46,15 @@ return {
 				end
 
 				if client.supports_method("textDocument/rename") then
-					vim.keymap.set("n", "<leader>br", vim.lsp.buf.rename, { desc = "Rename" })
+					vim.keymap.set("n", "<leader>br", vim.lsp.buf.rename)
 				end
 
 				if client.supports_method("textDocument/implementation") then
-					vim.keymap.set(
-						"n",
-						"gI",
-						require("telescope.builtin").lsp_implementations,
-						{ desc = "Goto Implementation" }
-					)
+					vim.keymap.set("n", "gI", require("telescope.builtin").lsp_implementations)
 				end
 
 				if client.supports_method("textDocument/declaration") then
-					vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
+					vim.keymap.set("n", "gD", vim.lsp.buf.declaration)
 				end
 			end,
 		})

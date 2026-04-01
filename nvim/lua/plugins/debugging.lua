@@ -30,9 +30,9 @@ return {
 			local dapui = require("dapui")
 			dapui.setup()
 
-			vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
-			vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Start Debugger" })
-			vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "Terminate" })
+			vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
+			vim.keymap.set("n", "<leader>dc", dap.continue)
+			vim.keymap.set("n", "<leader>dt", dap.terminate)
 
 			dap.listeners.before.attach.dapui_config = function()
 				dapui.open()

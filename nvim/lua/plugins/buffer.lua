@@ -6,7 +6,7 @@ return {
 				next = "tabs",
 				quit = false,
 			})
-			vim.keymap.set("n", "<leader>bd", ":BufDel<CR>", { desc = "Delete Buffer", silent = true })
+			vim.keymap.set("n", "<leader>bd", ":BufDel<CR>", { silent = true })
 		end,
 	},
 	{
@@ -29,25 +29,25 @@ return {
 				},
 			})
 
-			vim.keymap.set("n", "<S-h>", ":BufferLineCyclePrev<CR>", { desc = "Goto Prev Buffer", silent = true })
-			vim.keymap.set("n", "<S-l>", ":BufferLineCycleNext<CR>", { desc = "Goto Next Buffer", silent = true })
+			vim.keymap.set("n", "<S-h>", ":BufferLineCyclePrev<CR>", { silent = true })
+			vim.keymap.set("n", "<S-l>", ":BufferLineCycleNext<CR>", { silent = true })
 			vim.keymap.set(
 				"n",
 				"<leader>bl",
 				":BufferLineCloseRight<CR>",
-				{ desc = "Close All Right Buffer", silent = true }
+				{ silent = true }
 			)
 			vim.keymap.set(
 				"n",
 				"<leader>bh",
 				":BufferLineCloseLeft<CR>",
-				{ desc = "Close All Left Buffer", silent = true }
+				{ silent = true }
 			)
 			vim.keymap.set(
 				"n",
 				"<leader>bo",
 				":BufferLineCloseOthers<CR>",
-				{ desc = "Close All Buffer", silent = true }
+				{ silent = true }
 			)
 		end,
 	},
