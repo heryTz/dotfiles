@@ -13,12 +13,12 @@ edit() {
 
 [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return
 
-options="🖼 Fullscreen [Branded]\n🔲 Select Region [Branded]\n🪟 Window [Branded]\n🖼 Fullscreen\n🔲 Select Region\n🪟 Window\n❌ Cancel"
-choice=$(echo -e "$options" | rofi -dmenu -p "Screenshot")
+options="🖼  Fullscreen [Branded]\n🔲  Select Region [Branded]\n🪟  Window [Branded]\n🖼  Fullscreen\n🔲  Select Region\n🪟  Window\n❌  Cancel"
+choice=$(echo -e "$options" | rofi -dmenu -p "Screenshot" -theme ~/.config/rofi/theme.rasi)
 file=~/Pictures/Screenshots/screenshot_$(date +%Y%m%d_%H%M%S).png
 
 case "$choice" in
-  "🖼 Fullscreen [Branded]")
+  "🖼  Fullscreen [Branded]")
     tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
     processed=$(mktemp /tmp/screenshot_XXXXXX.png)
     grim "$tmpfile"
@@ -28,7 +28,7 @@ case "$choice" in
     add_branding "$processed"
     edit "$processed" "$file"
     ;;
-  "🔲 Select Region [Branded]")
+  "🔲  Select Region [Branded]")
     tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
     processed=$(mktemp /tmp/screenshot_XXXXXX.png)
     grim -g "$(slurp)" "$tmpfile"
@@ -38,7 +38,7 @@ case "$choice" in
     add_branding "$processed"
     edit "$processed" "$file"
     ;;
-  "🪟 Window [Branded]")
+  "🪟  Window [Branded]")
     tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
     processed=$(mktemp /tmp/screenshot_XXXXXX.png)
     win=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
@@ -49,17 +49,17 @@ case "$choice" in
     add_branding "$processed"
     edit "$processed" "$file"
     ;;
-  "🖼 Fullscreen")
+  "🖼  Fullscreen")
     tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
     grim "$tmpfile"
     edit "$tmpfile" "$file"
     ;;
-  "🔲 Select Region")
+  "🔲  Select Region")
     tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
     grim -g "$(slurp)" "$tmpfile"
     edit "$tmpfile" "$file"
     ;;
-  "🪟 Window")
+  "🪟  Window")
     tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
     win=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
     grim -g "$win" "$tmpfile"

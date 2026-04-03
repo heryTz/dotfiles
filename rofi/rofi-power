@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-options="⏻ Shutdown\n Reboot\n⏾ Suspend\n Lock\n󰍃 Logout"
+options="⏻  Shutdown\n  Reboot\n⏾  Suspend\n  Lock\n󰍃  Logout"
 
-choice=$(echo -e "$options" | rofi -dmenu -p "Power")
+choice=$(echo -e "$options" | rofi -dmenu -p "Power" -theme ~/.config/rofi/theme.rasi)
 
 case "$choice" in
   *Shutdown) systemctl poweroff ;;
