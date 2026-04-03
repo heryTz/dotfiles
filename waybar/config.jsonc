@@ -7,6 +7,7 @@
   "margin-bottom": 0,
   "spacing": 0,
   "modules-left": [
+    "custom/arch-logo",
     "hyprland/workspaces",
     "custom/uptime"
   ],
@@ -23,6 +24,10 @@
     "battery"
     // "custom/power"
   ],
+  "custom/arch-logo": {
+    "format": "",
+    "tooltip": false
+  },
   "hyprland/workspaces": {
     "format": "{name}:{icon}",
     "format-icons": {

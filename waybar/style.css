@@ -24,6 +24,7 @@
 }
 
 /* --- All Modules --- */
+#custom-arch-logo,
 #workspaces,
 #custom-uptime,
 #clock,
@@ -42,8 +43,14 @@
 }
 
 /* Edge: leftmost module — margin aligns left edge with hyprland window border */
-#workspaces {
+#custom-arch-logo {
   margin-left: 10px;
+  padding: 2px 8px 2px 0;
+  font-size: 16px;
+  color: #1793d1;
+}
+
+#workspaces {
   padding: 0;
 }
 
