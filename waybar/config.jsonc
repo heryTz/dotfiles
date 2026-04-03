@@ -13,12 +13,12 @@
   "modules-right": [
     "custom/pomodoro",
     "hyprland/language",
-    "bluetooth",
+    // "bluetooth",
     "network",
     "pulseaudio",
-    "backlight",
-    "battery",
-    "custom/power"
+    // "backlight",
+    "battery"
+    // "custom/power"
   ],
   "hyprland/workspaces": {
     "format": "{name}: {icon}",
