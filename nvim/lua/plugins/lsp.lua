@@ -38,7 +38,7 @@ return {
 				end)
 				vim.keymap.set("n", "gK", vim.lsp.buf.signature_help)
 				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action)
-				vim.keymap.set("n", "<leader>sym", require("telescope.builtin").lsp_document_symbols)
+				vim.keymap.set("n", "<leader>gs", require("telescope.builtin").lsp_document_symbols)
 
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
 				if client == nil then
