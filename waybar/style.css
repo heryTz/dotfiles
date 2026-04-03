@@ -20,7 +20,7 @@
   font-size: 13px;
   font-weight: 400;
   margin: 0;
-  padding: 0 4px;
+  padding: 0;
 }
 
 /* --- All Modules --- */
@@ -41,14 +41,17 @@
   border-right: 1px solid #3b4261;
 }
 
-/* Edge: #workspaces is the leftmost module — no left border, no extra left padding */
+/* Edge: leftmost module — margin aligns left edge with hyprland window border */
 #workspaces {
-  padding-left: 2px;
+  margin-left: 10px;
+  padding: 0;
 }
 
-/* Edge: rightmost active module has no right border */
+/* Edge: rightmost active module — margin aligns right edge with hyprland window border */
 #battery {
   border-right: none;
+  margin-right: 10px;
+  padding-right: 0;
 }
 
 /* Clock: separator on both sides since it floats in the center */
