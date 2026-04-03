@@ -19,7 +19,7 @@ window {
     border-radius:    0px;
     width:            480px;
     padding:          8px;
-    font:             "JetBrains Mono 11";
+    font:             "JetBrainsMono Nerd Font Mono 11";
 }
 
 mainbox {
