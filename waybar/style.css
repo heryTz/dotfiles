@@ -110,6 +110,11 @@
   color: #7aa2f7;
 }
 
+/* --- Bluetooth --- */
+#bluetooth.on {
+  font-size: 10px;
+}
+
 /* --- Network --- */
 #network.disconnected {
   color: #f7768e;

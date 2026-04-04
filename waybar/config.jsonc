@@ -17,7 +17,7 @@
   "modules-right": [
     "custom/pomodoro",
     "hyprland/language",
-    // "bluetooth",
+    "bluetooth",
     "network",
     "pulseaudio",
     // "backlight",
@@ -45,7 +45,7 @@
       "off": "󰂲",
       "connected": "󰂱"
     },
-    "on-click": "blueman-manager",
+    "on-click": "alacritty --class bluetui -e bluetui",
     "tooltip-format-connected": "{device_enumerate}"
   },
   "custom/music": {
