@@ -12,6 +12,7 @@
 !/swappy
 !/mako
 !/branding
+!/networkmanager-dmenu
 !Makefile
 !.my-zshrc
 !README.md
