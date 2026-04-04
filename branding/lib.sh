@@ -41,7 +41,7 @@ add_gradient_bg() {
   hh=$((h / 2))
   magick -size "${w}x${h}" xc: \
     -sparse-color Shepards \
-      "0,0 #e8f4fc  ${w},0 #b3d9f0  ${hw},0 #6ab8e4  ${hw},${hh} #3a9acf  0,${h} #1e7ab5  ${w},${h} #0d5a8a" \
+      "0,0 #131521  ${w},0 #131521  ${hw},0 #2d2f5e  ${hw},${hh} #1a1b2e  0,${h} #1e2030  ${w},${h} #24283b" \
     -blur 0x50 \
     "$shadowfile" -gravity center -composite \
     "$output"
@@ -83,7 +83,7 @@ add_branding() {
 
   magick -size "${total}x${total}" xc: \
     -sparse-color Shepards \
-      "0,0 #c8e8fa  ${total},0 #7ec5ec  0,${total} #4aa8d8  ${total},${total} #2080b8" \
+      "0,0 #7aa2f7  ${total},${total} #bb9af7" \
     -blur 0x6 \
     \( +clone -alpha extract \
        -fill black -colorize 100 \
@@ -111,88 +111,157 @@ add_branding() {
   local pill_r=$(( strip_h / 2 ))
 
   magick -size "${strip_w}x${strip_h}" xc:none \
-    -fill "rgba(0,0,0,0.42)" \
-    -draw "roundrectangle 0,0 $((strip_w - 1)),$((strip_h - 1)) ${pill_r},${pill_r}" \
     "$tmp_ring" -geometry "+${pad_x}+${pad_y}" -composite \
     "$tmp_text" -geometry "+${text_x}+${text_y}" -composite \
     "$tmp_brand" || { _branding_cleanup; return 1; }
   rm -f "$tmp_ring" "$tmp_text"
 
   tmp_out=$(mktemp /tmp/branded_XXXXXX.png)
-  magick "$file" "$tmp_brand" -gravity SouthEast -geometry "+12+12" -composite "$tmp_out" \
+  local extend=$(( strip_h + 16 ))
+  magick "$file" -gravity South -background '#1a1b2e' -splice "0x${extend}" "$file"
+  magick "$file" "$tmp_brand" -gravity SouthEast -geometry "+12+8" -composite "$tmp_out" \
     || { _branding_cleanup; return 1; }
   mv "$tmp_out" "$file"
   rm -f "$tmp_brand"
 }
 
-# Generate a 1200x630 branded post image with centered title text in a card.
+# Generate a 1080x1800 branded post image with a terminal-window aesthetic.
 # Args: <text> <output.png>
 add_title_post() {
   local text="$1" output="$2"
-  local w=1200 h=630
-  local font_size=60
-  # Escape for Pango XML markup; guard leading @ from ImageMagick
-  local safe_text="$text"
-  safe_text="${safe_text//&/&amp;}"
-  safe_text="${safe_text//</&lt;}"
-  safe_text="${safe_text//>/&gt;}"
+  local w=1080 h=1800
+
+  # --- Pango markup: escape XML chars, then convert *word* to purple spans ---
+  # ImageMagick's XML layer decodes entities before passing to pango markup,
+  # so double-escaping is required: & -> &amp;amp;  < -> &amp;lt;  > -> &amp;gt;
+  # Wrap words in *...* for purple highlight (#bb9af7). * is not an XML char
+  # so it survives escaping, then the last sed pass converts it to span tags.
+  local safe_text
+  safe_text=$(printf '%s' "$text" | \
+    sed -e 's/&/\&amp;amp;/g' \
+        -e 's/</\&amp;lt;/g' \
+        -e 's/>/\&amp;gt;/g' \
+        -e "s/\*\([^*]*\)\*/<span foreground='#bb9af7'>\1<\/span>/g")
   [[ "$safe_text" == @* ]] && safe_text=" $safe_text"
 
-  local card_w=1040 card_h=450 card_r=20
-  local card_x=$(( (w - card_w) / 2 ))
-  local card_y=$(( (h - card_h) / 2 ))
+  # --- Geometry constants ---
+  local win_w=928
+  local titlebar_h=52 content_top=53
+  local content_pad_top=40 content_pad_bot=40
+  local accent_x=48 accent_w=3 accent_pad=12
+  local text_x=79 text_y=105
+  local right_margin=48
+  local text_w=$(( win_w - text_x - right_margin ))   # 928 - 79 - 48 = 801
+  local font_size=44 label_size=13
+  local dot_y=26 dot_r=9
+  local corner_r=20
 
-  local tmp_bg tmp_bg_blur tmp_card tmp_text
-  trap 'rm -f "$tmp_bg" "$tmp_bg_blur" "$tmp_card" "$tmp_text"' RETURN
-  tmp_bg=$(mktemp /tmp/bg_XXXXXX.png)
-  tmp_bg_blur=$(mktemp /tmp/bg_blur_XXXXXX.png)
-  tmp_card=$(mktemp /tmp/card_XXXXXX.png)
-  tmp_text=$(mktemp /tmp/title_XXXXXX.png)
+  # --- Temp files ---
+  local tmp_bg tmp_text tmp_label tmp_win tmp_shadowed
+  tmp_bg=$(mktemp /tmp/post_bg_XXXXXX.png)
+  tmp_text=$(mktemp /tmp/post_text_XXXXXX.png)
+  tmp_label=$(mktemp /tmp/post_label_XXXXXX.png)
+  tmp_win=$(mktemp /tmp/post_win_XXXXXX.png)
+  tmp_shadowed=$(mktemp /tmp/post_shadow_XXXXXX.png)
+  trap 'rm -f "$tmp_bg" "$tmp_text" "$tmp_label" "$tmp_win" "$tmp_shadowed"' RETURN
 
-  # Screenshot-style Shepards gradient background
-  local hw=$((w / 2)) hh=$((h / 2))
+  # =========================================================
+  # PHASE A: Render text first to measure text_block_h
+  # =========================================================
+  magick -size "${text_w}x1600" -background none \
+    -define pango:align=left \
+    pango:"<span font='JetBrainsMono Nerd Font Bold ${font_size}' foreground='#c0caf5'>${safe_text}</span>" \
+    -trim +repage \
+    "$tmp_text" || return 1
+
+  local text_block_h
+  text_block_h=$(magick identify -format "%h" "$tmp_text") || return 1
+
+  # =========================================================
+  # PHASE A2: Compute dynamic dimensions
+  # =========================================================
+  local accent_top=$((content_top + content_pad_top))          # 93
+  local accent_bot=$((text_y + text_block_h + accent_pad))     # 105 + h + 12
+  local win_h=$(( accent_bot + content_pad_bot ))
+  (( win_h < 300 )) && win_h=300
+  # =========================================================
+  # PHASE B: Build background canvas
+  # =========================================================
   magick -size "${w}x${h}" xc: \
     -sparse-color Shepards \
-      "0,0 #e8f4fc  ${w},0 #b3d9f0  ${hw},0 #6ab8e4  ${hw},${hh} #3a9acf  0,${h} #1e7ab5  ${w},${h} #0d5a8a" \
-    -blur 0x50 \
-    "$tmp_bg" || { return 1; }
+      "0,0 #1a1b2e  ${w},${h} #24283b  $((w/2)),$((h/2)) #1e2030" \
+    -blur 0x40 \
+    "$tmp_bg" || return 1
 
-  # Glass card: blur bg, mask to card shape, dark tint + white border
-  magick "$tmp_bg" -blur 0x18 "$tmp_bg_blur" || { return 1; }
+  # =========================================================
+  # PHASE B2: Build terminal window (window coordinates)
+  # =========================================================
 
-  magick "$tmp_bg_blur" \
-    -crop "${card_w}x${card_h}+${card_x}+${card_y}" +repage \
+  # Step 1: window fill + outer border
+  magick -size "${win_w}x${win_h}" xc:'#24283b' \
+    -fill none -stroke '#3b3f5c' -strokewidth 1 \
+    -draw "rectangle 0,0 $((win_w-1)),$((win_h-1))" \
+    "$tmp_win" || return 1
+
+  # Step 2: titlebar background + separator line
+  magick "$tmp_win" \
+    -fill '#1f2335' -draw "rectangle 0,0 $((win_w-1)),$((titlebar_h-1))" \
+    -fill '#292e42' -draw "line 0,${titlebar_h} $((win_w-1)),${titlebar_h}" \
+    "$tmp_win" || return 1
+
+  # Step 3: traffic-light dots
+  local dot_colors=("28 #f7768e" "56 #e0af68" "84 #9ece6a")
+  for dot in "${dot_colors[@]}"; do
+    local cx="${dot%% *}" color="${dot##* }"
+    local dot_edge_y=$(( dot_y - dot_r ))
+    magick "$tmp_win" \
+      -fill "$color" \
+      -draw "circle ${cx},${dot_y} ${cx},${dot_edge_y}" \
+      "$tmp_win" || return 1
+  done
+
+  # Step 4: titlebar label
+  magick -background none -fill '#565f89' \
+    -font "JetBrainsMono-NF-Regular" -pointsize "$label_size" \
+    label:'alacritty — hery@arch:~' \
+    "$tmp_label" || return 1
+  local lw lh lx ly
+  lw=$(magick identify -format "%w" "$tmp_label") || return 1
+  lh=$(magick identify -format "%h" "$tmp_label") || return 1
+  lx=$(( (win_w - lw) / 2 ))
+  ly=$(( (titlebar_h - lh) / 2 ))
+  magick "$tmp_win" "$tmp_label" -geometry "+${lx}+${ly}" -composite "$tmp_win" || return 1
+
+  # Step 5: left-border accent bar
+  magick "$tmp_win" \
+    -fill '#7aa2f7' \
+    -draw "rectangle ${accent_x},${accent_top} $((accent_x + accent_w - 1)),${accent_bot}" \
+    "$tmp_win" || return 1
+
+  # Step 6: composite title text
+  magick "$tmp_win" "$tmp_text" -geometry "+${text_x}+${text_y}" -composite "$tmp_win" || return 1
+
+  # =========================================================
+  # PHASE C: Mask, shadow, composite
+  # =========================================================
+
+  # Step 7: rounded alpha mask (20px corners)
+  magick "$tmp_win" \
     \( +clone -alpha extract \
        -fill black -colorize 100 \
        -fill white \
-       -draw "roundrectangle 0,0 $((card_w - 1)),$((card_h - 1)) ${card_r},${card_r}" \
+       -draw "roundrectangle 0,0 $((win_w-1)),$((win_h-1)) ${corner_r},${corner_r}" \
     \) \
     -alpha off -compose CopyOpacity -composite \
-    -fill "rgba(5,15,40,0.58)" \
-    -draw "roundrectangle 0,0 $((card_w - 1)),$((card_h - 1)) ${card_r},${card_r}" \
-    -fill none \
-    -stroke "rgba(255,255,255,0.20)" \
-    -strokewidth 2 \
-    -draw "roundrectangle 0,0 $((card_w - 1)),$((card_h - 1)) ${card_r},${card_r}" \
-    "$tmp_card" || { return 1; }
+    "$tmp_win" || return 1
 
-  # White text inside glass card — pango for emoji/fallback font support
-  magick -size "$((card_w - 120))x$((card_h - 80))" \
-    -background none \
-    -define pango:align=center \
-    pango:"<span font='Inter Bold ${font_size}' foreground='white'>${safe_text}</span>" \
-    "$tmp_text" || { return 1; }
+  # Step 8: drop shadow + merge
+  magick -background none \( "$tmp_win" -shadow 65x24+0+16 \) "$tmp_win" \
+    -layers merge "$tmp_shadowed" || return 1
 
-  # Composite: bg + card + text (text centered inside card)
-  local txt_w txt_h txt_x txt_y
-  txt_w=$(magick identify -format "%w" "$tmp_text") || { return 1; }
-  txt_h=$(magick identify -format "%h" "$tmp_text") || { return 1; }
-  txt_x=$(( card_x + (card_w - txt_w) / 2 ))
-  txt_y=$(( card_y + (card_h - txt_h) / 2 ))
-  magick "$tmp_bg" \
-    "$tmp_card" -geometry "+${card_x}+${card_y}" -composite \
-    "$tmp_text" -geometry "+${txt_x}+${txt_y}" -composite \
-    "$output" || { return 1; }
+  # Step 9: composite window onto background; centering delegated to -gravity Center
+  magick "$tmp_bg" "$tmp_shadowed" -gravity Center -composite "$output" || return 1
 
+  # Step 10: branding badge (unchanged)
   add_branding "$output"
 }

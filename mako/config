@@ -1,1 +1,47 @@
-default-timeout=4000
+# --- Mako notification config — Tokyo Night TUI ---
+
+# Layout
+width=320
+height=100
+padding=6,10
+margin=10
+border-size=1
+border-radius=0
+
+# Colors
+background-color=#24283bff
+text-color=#c0caf5ff
+border-color=#3b4261ff
+
+# Typography
+font=JetBrainsMono Nerd Font Mono 11
+markup=1
+format=<b>%s</b>\n%b
+
+# Position
+anchor=top-right
+layer=top
+
+# Behavior
+default-timeout=5000
+max-visible=5
+max-history=10
+sort=-time
+icons=0
+
+# Interactions
+on-button-left=invoke-default-action
+on-button-right=dismiss
+
+# --- Urgency: low ---
+[urgency=low]
+background-color=#1f2335ff
+text-color=#565f89ff
+border-color=#3b4261ff
+
+# --- Urgency: critical ---
+[urgency=critical]
+background-color=#24283bff
+text-color=#f7768eff
+border-color=#f7768eff
+default-timeout=0
