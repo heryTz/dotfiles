@@ -1,5 +1,7 @@
 # Dotfiles
 
+![demo](demo.png)
+
 ## tokyonight-storm palette
 
 | Role | Color |
