@@ -13,7 +13,7 @@ edit() {
 
 [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return
 
-options="🖼  Fullscreen [Branded]\n🔲  Select Region [Branded]\n🪟  Window [Branded]\n🖼  Fullscreen\n🔲  Select Region\n🪟  Window\n❌  Cancel"
+options="🖼  Fullscreen [Branded]\n🔲  Select Region [Branded]\n🪟  Window [Branded]\n🖼  Fullscreen\n🔲  Select Region\n🪟  Window\n🪟  Window [Fancy]\n❌  Cancel"
 choice=$(echo -e "$options" | rofi -dmenu -p "Screenshot" -theme ~/.config/rofi/theme.rasi)
 file=~/Pictures/Screenshots/screenshot_$(date +%Y%m%d_%H%M%S).png
 
@@ -65,6 +65,16 @@ case "$choice" in
     grim -g "$win" "$tmpfile"
     round_corners "$tmpfile"
     edit "$tmpfile" "$file"
+    ;;
+  "🪟  Window [Fancy]")
+    tmpfile=$(mktemp /tmp/screenshot_XXXXXX.png)
+    processed=$(mktemp /tmp/screenshot_XXXXXX.png)
+    win=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+    grim -g "$win" "$tmpfile"
+    round_corners "$tmpfile"
+    add_gradient_bg "$tmpfile" "$processed"
+    rm "$tmpfile"
+    edit "$processed" "$file"
     ;;
   *Cancel)
     exit 0
