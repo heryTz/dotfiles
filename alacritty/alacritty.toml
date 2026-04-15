@@ -1,7 +1,9 @@
 
 [font]
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "Regular" }
+## Linux
 size = 10.0
+# size = 18.0
 ## Macos
 # size = 13.0
 # size = 18.0
