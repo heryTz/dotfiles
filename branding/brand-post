@@ -14,7 +14,7 @@ Options:
   --no-open    Skip opening result in swappy
   -h, --help   Show this help
 
-Title must be 66 characters or fewer.
+Title must be 105 characters or fewer.
 EOF
   exit 1
 }
@@ -35,8 +35,8 @@ done
 
 [[ -z "$title" ]] && { echo "Error: title text is required."; usage; }
 
-if [[ ${#title} -gt 66 ]]; then
-  echo "Error: title is ${#title} characters (max 66)."
+if [[ ${#title} -gt 105 ]]; then
+  echo "Error: title is ${#title} characters (max 105)."
   exit 1
 fi
 

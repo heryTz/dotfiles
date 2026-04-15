@@ -125,11 +125,11 @@ add_branding() {
   rm -f "$tmp_brand"
 }
 
-# Generate a 1080x1800 branded post image with a terminal-window aesthetic.
+# Generate a 1200x628 branded LinkedIn landscape post image.
 # Args: <text> <output.png>
 add_title_post() {
   local text="$1" output="$2"
-  local w=1080 h=1800
+  local w=1200 h=628
 
   # --- Pango markup: escape XML chars, then convert *word* to purple spans ---
   # ImageMagick's XML layer decodes entities before passing to pango markup,
@@ -142,48 +142,34 @@ add_title_post() {
         -e 's/</\&amp;lt;/g' \
         -e 's/>/\&amp;gt;/g' \
         -e "s/\*\([^*]*\)\*/<span foreground='#bb9af7'>\1<\/span>/g")
-  [[ "$safe_text" == @* ]] && safe_text=" $safe_text"
 
   # --- Geometry constants ---
-  local win_w=928
-  local titlebar_h=52 content_top=53
-  local content_pad_top=40 content_pad_bot=40
-  local accent_x=48 accent_w=3 accent_pad=12
-  local text_x=79 text_y=105
-  local right_margin=48
-  local text_w=$(( win_w - text_x - right_margin ))   # 928 - 79 - 48 = 801
-  local font_size=44 label_size=13
-  local dot_y=26 dot_r=9
-  local corner_r=20
+  local text_w=1000
+  local font_size=44
+
+  # --- Pango markup: text only (quote bar drawn separately) ---
+  local pango_markup
+  pango_markup="<span font='Space Grotesk SemiBold ${font_size}' foreground='#c0caf5'>${safe_text}</span>"
 
   # --- Temp files ---
-  local tmp_bg tmp_text tmp_label tmp_win tmp_shadowed
+  local tmp_bg tmp_text
   tmp_bg=$(mktemp /tmp/post_bg_XXXXXX.png)
   tmp_text=$(mktemp /tmp/post_text_XXXXXX.png)
-  tmp_label=$(mktemp /tmp/post_label_XXXXXX.png)
-  tmp_win=$(mktemp /tmp/post_win_XXXXXX.png)
-  tmp_shadowed=$(mktemp /tmp/post_shadow_XXXXXX.png)
-  trap 'rm -f "$tmp_bg" "$tmp_text" "$tmp_label" "$tmp_win" "$tmp_shadowed"' RETURN
+  trap 'rm -f "$tmp_bg" "$tmp_text"' RETURN
 
   # =========================================================
-  # PHASE A: Render text first to measure text_block_h
+  # PHASE A: Render text to measure dimensions
   # =========================================================
   magick -size "${text_w}x1600" -background none \
     -define pango:align=left \
-    pango:"<span font='JetBrainsMono Nerd Font Bold ${font_size}' foreground='#c0caf5'>${safe_text}</span>" \
+    pango:"${pango_markup}" \
     -trim +repage \
     "$tmp_text" || return 1
 
-  local text_block_h
+  local text_block_w text_block_h
+  text_block_w=$(magick identify -format "%w" "$tmp_text") || return 1
   text_block_h=$(magick identify -format "%h" "$tmp_text") || return 1
 
-  # =========================================================
-  # PHASE A2: Compute dynamic dimensions
-  # =========================================================
-  local accent_top=$((content_top + content_pad_top))          # 93
-  local accent_bot=$((text_y + text_block_h + accent_pad))     # 105 + h + 12
-  local win_h=$(( accent_bot + content_pad_bot ))
-  (( win_h < 300 )) && win_h=300
   # =========================================================
   # PHASE B: Build background canvas
   # =========================================================
@@ -194,74 +180,22 @@ add_title_post() {
     "$tmp_bg" || return 1
 
   # =========================================================
-  # PHASE B2: Build terminal window (window coordinates)
+  # PHASE C: Composite text + quote bar onto background
   # =========================================================
 
-  # Step 1: window fill + outer border
-  magick -size "${win_w}x${win_h}" xc:'#24283b' \
-    -fill none -stroke '#3b3f5c' -strokewidth 1 \
-    -draw "rectangle 0,0 $((win_w-1)),$((win_h-1))" \
-    "$tmp_win" || return 1
+  # Step 1: composite text centered
+  magick "$tmp_bg" "$tmp_text" -gravity Center -composite "$output" || return 1
 
-  # Step 2: titlebar background + separator line
-  magick "$tmp_win" \
-    -fill '#1f2335' -draw "rectangle 0,0 $((win_w-1)),$((titlebar_h-1))" \
-    -fill '#292e42' -draw "line 0,${titlebar_h} $((win_w-1)),${titlebar_h}" \
-    "$tmp_win" || return 1
-
-  # Step 3: traffic-light dots
-  local dot_colors=("28 #f7768e" "56 #e0af68" "84 #9ece6a")
-  for dot in "${dot_colors[@]}"; do
-    local cx="${dot%% *}" color="${dot##* }"
-    local dot_edge_y=$(( dot_y - dot_r ))
-    magick "$tmp_win" \
-      -fill "$color" \
-      -draw "circle ${cx},${dot_y} ${cx},${dot_edge_y}" \
-      "$tmp_win" || return 1
-  done
-
-  # Step 4: titlebar label
-  magick -background none -fill '#565f89' \
-    -font "JetBrainsMono-NF-Regular" -pointsize "$label_size" \
-    label:'alacritty — hery@arch:~' \
-    "$tmp_label" || return 1
-  local lw lh lx ly
-  lw=$(magick identify -format "%w" "$tmp_label") || return 1
-  lh=$(magick identify -format "%h" "$tmp_label") || return 1
-  lx=$(( (win_w - lw) / 2 ))
-  ly=$(( (titlebar_h - lh) / 2 ))
-  magick "$tmp_win" "$tmp_label" -geometry "+${lx}+${ly}" -composite "$tmp_win" || return 1
-
-  # Step 5: left-border accent bar
-  magick "$tmp_win" \
+  # Step 2: draw thin vertical quote bar to the left of the text block
+  local bar_w=3 bar_gap=32
+  local bar_x=$(( (w - text_block_w) / 2 - bar_gap - bar_w ))
+  local bar_y=$(( (h - text_block_h) / 2 ))
+  local bar_y2=$(( bar_y + text_block_h - 1 ))
+  magick "$output" \
     -fill '#7aa2f7' \
-    -draw "rectangle ${accent_x},${accent_top} $((accent_x + accent_w - 1)),${accent_bot}" \
-    "$tmp_win" || return 1
+    -draw "rectangle ${bar_x},${bar_y} $((bar_x + bar_w - 1)),${bar_y2}" \
+    "$output" || return 1
 
-  # Step 6: composite title text
-  magick "$tmp_win" "$tmp_text" -geometry "+${text_x}+${text_y}" -composite "$tmp_win" || return 1
-
-  # =========================================================
-  # PHASE C: Mask, shadow, composite
-  # =========================================================
-
-  # Step 7: rounded alpha mask (20px corners)
-  magick "$tmp_win" \
-    \( +clone -alpha extract \
-       -fill black -colorize 100 \
-       -fill white \
-       -draw "roundrectangle 0,0 $((win_w-1)),$((win_h-1)) ${corner_r},${corner_r}" \
-    \) \
-    -alpha off -compose CopyOpacity -composite \
-    "$tmp_win" || return 1
-
-  # Step 8: drop shadow + merge
-  magick -background none \( "$tmp_win" -shadow 65x24+0+16 \) "$tmp_win" \
-    -layers merge "$tmp_shadowed" || return 1
-
-  # Step 9: composite window onto background; centering delegated to -gravity Center
-  magick "$tmp_bg" "$tmp_shadowed" -gravity Center -composite "$output" || return 1
-
-  # Step 10: branding badge (unchanged)
+  # Step 6: branding badge
   add_branding "$output"
 }
