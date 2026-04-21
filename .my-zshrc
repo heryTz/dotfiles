@@ -21,3 +21,54 @@ export PATH="$PATH:$HOME/prog/third/LLVM-19.1.7-Linux-X64/bin"
 
 export GOPATH="$HOME/prog/go"
 export PATH="$PATH:$HOME/prog/go/bin"
+
+pp() {
+  local project
+  project=$(find ~/prog -mindepth 2 -maxdepth 2 -type d \
+    | sed "s|$HOME/prog/||" \
+    | fzf --prompt="project: ")
+  [[ -z "$project" ]] && return
+
+  local session_name
+  session_name=$(basename "$project")
+  local project_path="$HOME/prog/$project"
+
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    tmux attach-session -t "$session_name"
+  else
+    # initial pane is 1.1 (pane-base-index 1)
+    tmux new-session -d -s "$session_name" -c "$project_path"
+    # split-window -h keeps original as 1.1 (left), new pane is 1.2 (right)
+    tmux split-window -h -t "$session_name:1.1" -c "$project_path"
+    # launch nvim in left pane
+    tmux send-keys -t "$session_name:1.1" "nvim" Enter
+    # set focus to left pane so attach lands in nvim
+    tmux select-pane -t "$session_name:1.1"
+    tmux attach-session -t "$session_name"
+  fi
+}
+
+pps() {
+  local project
+  project=$(find ~/prog/streamer -mindepth 1 -maxdepth 1 -type d \
+    | xargs -I{} basename {} \
+    | fzf --prompt="streamer: ")
+  [[ -z "$project" ]] && return
+
+  local session_name="$project"
+  local project_path="$HOME/prog/streamer/$project"
+
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    tmux attach-session -t "$session_name"
+  else
+    # initial pane is 1.1 (pane-base-index 1)
+    tmux new-session -d -s "$session_name" -c "$project_path"
+    # split-window -h keeps original as 1.1 (left), new pane is 1.2 (right)
+    tmux split-window -h -t "$session_name:1.1" -c "$project_path"
+    # launch nvim in left pane
+    tmux send-keys -t "$session_name:1.1" "nvim" Enter
+    # set focus to left pane so attach lands in nvim
+    tmux select-pane -t "$session_name:1.1"
+    tmux attach-session -t "$session_name"
+  fi
+}
