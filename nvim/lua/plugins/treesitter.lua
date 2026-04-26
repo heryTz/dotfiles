@@ -23,6 +23,7 @@ return {
 				"gotmpl",
 				"go",
 				"c",
+				"astro",
 			},
 			ignore_install = {},
 			auto_install = true,

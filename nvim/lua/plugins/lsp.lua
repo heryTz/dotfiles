@@ -7,6 +7,7 @@ local lsp = {
 	"gopls",
 	"jsonls",
 	"biome",
+	"astro",
 }
 
 return {
