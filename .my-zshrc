@@ -1,3 +1,7 @@
+# Hide env-var values in completion (drop _expand + extra-verbose) so secrets aren't previewed.
+zstyle ':completion:*' completer _complete _complete:-fuzzy _correct _approximate _ignored
+zstyle ':completion:*:parameters' extra-verbose no
+
 alias lzd='lazydocker'
 alias nvim-lazy='NVIM_APPNAME=nvim-lazy nvim'
 alias gfp='git fetch origin --prune'
