@@ -26,6 +26,9 @@ export PATH="$PATH:$HOME/prog/third/LLVM-19.1.7-Linux-X64/bin"
 export GOPATH="$HOME/prog/go"
 export PATH="$PATH:$HOME/prog/go/bin"
 
+export CHROME_EXECUTABLE="/usr/bin/brave"
+export PATH="$PATH:$HOME/prog/third/flutter/bin"
+
 pp() {
   local project
   project=$(find ~/prog -mindepth 2 -maxdepth 2 -type d \
