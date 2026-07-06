@@ -13,6 +13,9 @@
 !/mako
 !/branding
 !/networkmanager-dmenu
+!/herdr
+/herdr/*
+!/herdr/config.toml
 !Makefile
 !.my-zshrc
 !README.md
