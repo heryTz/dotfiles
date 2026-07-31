@@ -9,6 +9,6 @@ case "$choice" in
   *Reboot) systemctl reboot ;;
   *Suspend) systemctl suspend ;;
   *Lock) hyprlock ;;
-  *Logout) hyprctl dispatch exit ;;
+  *Logout) hyprctl dispatch 'hl.dsp.exit()' ;;
 esac
 
