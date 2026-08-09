@@ -12,6 +12,9 @@ vim.opt.breakindent = true
 vim.opt.undofile = true
 
 vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
+	vim.opt.clipboard = "unnamedplus"
 end)
 
+vim.g.markdown_fenced_languages = {
+	"ts=typescript",
+}
