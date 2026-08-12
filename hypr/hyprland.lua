@@ -356,3 +356,15 @@ hl.window_rule({
     size   = "700 500",
     center = true,
 })
+
+-- Google Meet's call popup. Matches the meeting-code title exactly
+-- (xxx-xxxx-xxx) so the main Brave window, which is titled
+-- "Meet – <code> - Brave" when the call tab is focused, is left alone.
+hl.window_rule({
+    name  = "center-meet-float",
+    match = { title = "^Meet – [a-z]{3}-[a-z]{4}-[a-z]{3}$" },
+
+    float  = true,
+    size   = "640 360",
+    center = true,
+})
