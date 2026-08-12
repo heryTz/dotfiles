@@ -29,6 +29,8 @@ export PATH="$PATH:$HOME/prog/go/bin"
 export CHROME_EXECUTABLE="/usr/bin/brave"
 export PATH="$PATH:$HOME/prog/third/flutter/bin"
 
+export PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
+
 pp() {
   local project
   project=$(find ~/prog -mindepth 2 -maxdepth 2 -type d \
