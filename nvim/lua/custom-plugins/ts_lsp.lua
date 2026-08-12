@@ -9,7 +9,7 @@ M.setup = function(params)
 	local capabilities = params.capabilities
 
 	-- Mason like registry ^^
-	local registry_path = vim.fn.expand("~/prog/third/nvim-registry")
+	local registry_path = vim.fn.expand("~/prog/third/nvim-registry/node")
 
 	vim.lsp.config("vtsls", {
 		capabilities = capabilities,
@@ -20,7 +20,7 @@ M.setup = function(params)
 						{
 							name = "@vue/typescript-plugin",
 							location = registry_path
-								.. "/packages/vue-language-server/node_modules/@vue/language-server",
+								.. "/node_modules/@vue/language-server",
 							languages = { "vue" },
 							configNamespace = "typescript",
 						},
