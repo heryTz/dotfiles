@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# cliphist picker. Enter = copy, Alt+d = delete entry.
+# A "Clear history" row at the top wipes the database (Alt+w does the same).
+# Uses rofi -format i so we select by index and always keep cliphist's id
+# column, which `cliphist decode` needs (decoding raw text does not work).
+
+theme=~/.config/rofi/theme.rasi
+
+confirm_wipe() {
+  # "No" first so the default selection is the safe one
+  choice=$(printf '%s\n' "No" "Yes, clear everything" |
+    rofi -dmenu -p "Clear history?" -theme "$theme")
+  case "$choice" in
+    Yes*) cliphist wipe ;;
+  esac
+}
+
+list=$(cliphist list)
+
+# leading tabs keep the id/text column layout, so -display-columns 2 shows these
+if [ -z "$list" ]; then
+  # still open the picker, so the keybind never looks dead — but with nothing
+  # to copy or clear, every selection here is a no-op
+  printf '%s\n' $'\t󰄰  History is empty' |
+    rofi -dmenu -p "Clipboard" -display-columns 2 -theme "$theme" >/dev/null
+  exit 0
+fi
+
+clear_row=$'\t󰩹  Clear history'
+menu=$(printf '%s\n' "$clear_row" "$list")
+
+idx=$(printf '%s\n' "$menu" | rofi -dmenu -p "Clipboard" \
+  -display-columns 2 \
+  -format i \
+  -selected-row 1 \
+  -kb-custom-1 "Alt+d" \
+  -kb-custom-2 "Alt+w" \
+  -theme "$theme")
+status=$?
+
+# Alt+w wipes regardless of what is highlighted
+if [ "$status" = 11 ]; then
+  confirm_wipe
+  exit 0
+fi
+
+# rofi prints nothing on plain cancel (esc)
+[ -n "$idx" ] || exit 0
+
+# index 0 is the synthetic clear row; list line N is menu index N
+if [ "$idx" -eq 0 ]; then
+  [ "$status" = 0 ] && confirm_wipe
+  exit 0
+fi
+
+line=$(printf '%s\n' "$list" | sed -n "${idx}p")
+
+case "$status" in
+  0)  printf '%s\n' "$line" | cliphist decode | wl-copy ;;
+  10) printf '%s\n' "$line" | cliphist delete ;;
+esac
