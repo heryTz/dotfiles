@@ -32,8 +32,15 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("mako")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
 
-    hl.exec_cmd('gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"')   -- GTK3
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface gtk-theme "Breeze-Dark"')    -- GTK3
     hl.exec_cmd('gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"') -- GTK4
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface icon-theme "breeze-dark"')
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface cursor-theme "breeze_cursors"')
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface cursor-size 24')
+
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface font-name "Inter 11"')
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface document-font-name "Inter 12"')
+    hl.exec_cmd('gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font Mono 11"')
 end)
 
 
@@ -41,6 +48,7 @@ end)
 ---- ENVIRONMENT VARIABLES ----
 -------------------------------
 
+hl.env("XCURSOR_THEME", "breeze_cursors")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
