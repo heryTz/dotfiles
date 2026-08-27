@@ -51,15 +51,48 @@ add_gradient_bg() {
 # Args: <file.png>
 add_branding() {
   local file="$1"
-  local avatar_src="$HOME/.config/rofi/profile.png"
-  local size=36
-  local border=2
+  local avatar_src="$HOME/.config/rofi/avatar.png"
+
+  # Scale the badge with the canvas so it reads the same on a 2560px screenshot
+  # as on a post. Post width is the reference, so posts are unchanged at 1.0.
+  # Held as permille because bash has no float arithmetic.
+  local ref_w=1200
+  local img_w
+  img_w=$(magick identify -format "%w" "$file") || return 1
+  local scale=$(( img_w * 1000 / ref_w ))
+  (( scale < 1000 )) && scale=1000
+  (( scale > 2600 )) && scale=2600
+
+  local size=$(( 56 * scale / 1000 ))
+  local border=$(( 3 * scale / 1000 ))
+  (( border < 2 )) && border=2
   local total=$((size + border * 2))
   local half_t=$((total / 2))
   local half_s=$((size / 2))
-  local gap=10  pad_y=8
+  local gap=$(( 14 * scale / 1000 ))
+  local pad_y=$(( 12 * scale / 1000 ))
   local pad_x=$pad_y
-  local name="Hery Nirintsoa"  font_size=17
+  local name="Hery Nirintsoa"
+  local font_size=$(( 26 * scale / 1000 ))
+
+  # Circle masks are drawn oversized and downscaled, so the avatar and ring
+  # edges land antialiased instead of stair-stepped. Drawing them at final
+  # size leaves visibly jagged pixels, more so as size grows.
+  local ss=4
+
+  # The ring is synthetic, so it can always take the full 4x.
+  local total_hi=$((total * ss))
+  local half_t_hi=$((total_hi / 2))
+  local blur_hi=$(( 6 * scale * ss / 1000 ))
+
+  # The avatar cannot: oversampling past the source resolution would upscale
+  # the photo and soften it. Cap the mask at the source's own width.
+  local avatar_w
+  avatar_w=$(magick identify -format "%w" "$avatar_src") || return 1
+  local size_hi=$((size * ss))
+  (( size_hi > avatar_w )) && size_hi=$avatar_w
+  (( size_hi < size )) && size_hi=$size
+  local half_s_hi=$((size_hi / 2))
 
   local tmp_avatar tmp_disc tmp_ring tmp_text tmp_brand tmp_out
   tmp_avatar=$(mktemp /tmp/av_XXXXXX.png)
@@ -73,23 +106,25 @@ add_branding() {
   }
 
   magick "$avatar_src" \
-    -resize "${size}x${size}^" -gravity center -extent "${size}x${size}" \
+    -resize "${size_hi}x${size_hi}^" -gravity center -extent "${size_hi}x${size_hi}" \
     \( +clone -alpha extract \
        -fill black -colorize 100 \
-       -fill white -draw "circle ${half_s},${half_s} ${half_s},1" \
+       -fill white -draw "circle ${half_s_hi},${half_s_hi} ${half_s_hi},1" \
     \) \
     -alpha off -compose CopyOpacity -composite \
+    -filter Catrom -resize "${size}x${size}" \
     "$tmp_avatar" || { _branding_cleanup; return 1; }
 
-  magick -size "${total}x${total}" xc: \
+  magick -size "${total_hi}x${total_hi}" xc: \
     -sparse-color Shepards \
-      "0,0 #7aa2f7  ${total},${total} #bb9af7" \
-    -blur 0x6 \
+      "0,0 #7aa2f7  ${total_hi},${total_hi} #bb9af7" \
+    -blur 0x${blur_hi} \
     \( +clone -alpha extract \
        -fill black -colorize 100 \
-       -fill white -draw "circle ${half_t},${half_t} ${half_t},1" \
+       -fill white -draw "circle ${half_t_hi},${half_t_hi} ${half_t_hi},1" \
     \) \
     -alpha off -compose CopyOpacity -composite \
+    -filter Catrom -resize "${total}x${total}" \
     "$tmp_disc" || { _branding_cleanup; return 1; }
 
   magick "$tmp_disc" "$tmp_avatar" -gravity center -compose Over -composite "$tmp_ring" \
@@ -117,9 +152,11 @@ add_branding() {
   rm -f "$tmp_ring" "$tmp_text"
 
   tmp_out=$(mktemp /tmp/branded_XXXXXX.png)
-  local extend=$(( strip_h + 16 ))
+  local extend=$(( strip_h + 24 * scale / 1000 ))
+  local off_x=$(( 18 * scale / 1000 ))
+  local off_y=$(( 12 * scale / 1000 ))
   magick "$file" -gravity South -background '#1a1b2e' -splice "0x${extend}" "$file"
-  magick "$file" "$tmp_brand" -gravity SouthEast -geometry "+12+8" -composite "$tmp_out" \
+  magick "$file" "$tmp_brand" -gravity SouthEast -geometry "+${off_x}+${off_y}" -composite "$tmp_out" \
     || { _branding_cleanup; return 1; }
   mv "$tmp_out" "$file"
   rm -f "$tmp_brand"
