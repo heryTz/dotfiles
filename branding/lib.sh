@@ -12,6 +12,12 @@ BRAND_GOLD_DEEP="#daa216" # accent, light-mode gold; shades the avatar ring
 BRAND_GRAD_HI="#1f1f24"  # post background gradient, lit corner
 BRAND_GRAD_MID="#141417" # post background gradient, midpoint
 
+# Fonts, matching the site. Two engines, two spellings: ImageMagick wants the
+# hyphenated name, pango wants a descriptor. ImageMagick falls back silently on
+# an unknown -font, so a typo renders in the wrong face rather than failing.
+BRAND_FONT_IM="Geist-Mono-Bold"  # badge name, via ImageMagick label:
+BRAND_FONT_PANGO="Geist Bold"    # post headline, via pango markup
+
 # Round corners of an image in-place to match Hyprland rounding = 6.
 # Args: <file.png>
 round_corners() {
@@ -144,7 +150,7 @@ add_branding() {
   rm -f "$tmp_avatar" "$tmp_disc"
 
   magick -background none -fill "$BRAND_FG" \
-    -font "JetBrainsMono-NF-Bold" -pointsize "$font_size" \
+    -font "$BRAND_FONT_IM" -pointsize "$font_size" \
     label:"$name" "$tmp_text" || { _branding_cleanup; return 1; }
 
   local text_w text_h
@@ -198,7 +204,7 @@ add_title_post() {
 
   # --- Pango markup: text only (quote bar drawn separately) ---
   local pango_markup
-  pango_markup="<span font='Space Grotesk SemiBold ${font_size}' foreground='${BRAND_FG}'>${safe_text}</span>"
+  pango_markup="<span font='${BRAND_FONT_PANGO} ${font_size}' foreground='${BRAND_FG}'>${safe_text}</span>"
 
   # --- Temp files ---
   local tmp_bg tmp_text
