@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+# Palette: mirrors OG_COLOR in the portfolio's src/server/og-assets.ts, so
+# branded images match the OG cards and banners herynirintsoa.com already ships.
+# Monochrome base plus a single gold accent; there is deliberately no second hue.
+BRAND_BG="#0a0a0b"       # background
+BRAND_SURFACE="#161618"  # card, used for the footer band
+BRAND_LIFT="#202023"     # neutral backdrop lift, keeps drop shadows readable
+BRAND_FG="#f4f4f5"       # foreground
+BRAND_GOLD="#f0c238"     # accent (dark-mode gold)
+BRAND_GOLD_DEEP="#daa216" # accent, light-mode gold; shades the avatar ring
+BRAND_GRAD_HI="#1f1f24"  # post background gradient, lit corner
+BRAND_GRAD_MID="#141417" # post background gradient, midpoint
+
 # Round corners of an image in-place to match Hyprland rounding = 6.
 # Args: <file.png>
 round_corners() {
@@ -41,7 +53,7 @@ add_gradient_bg() {
   hh=$((h / 2))
   magick -size "${w}x${h}" xc: \
     -sparse-color Shepards \
-      "0,0 #131521  ${w},0 #131521  ${hw},0 #2d2f5e  ${hw},${hh} #1a1b2e  0,${h} #1e2030  ${w},${h} #24283b" \
+      "0,0 $BRAND_BG  ${w},0 $BRAND_BG  ${hw},0 $BRAND_LIFT  ${hw},${hh} #1c1c1f  0,${h} $BRAND_BG  ${w},${h} $BRAND_SURFACE" \
     -blur 0x50 \
     "$shadowfile" -gravity center -composite \
     "$output"
@@ -117,7 +129,7 @@ add_branding() {
 
   magick -size "${total_hi}x${total_hi}" xc: \
     -sparse-color Shepards \
-      "0,0 #7aa2f7  ${total_hi},${total_hi} #bb9af7" \
+      "0,0 $BRAND_GOLD  ${total_hi},${total_hi} $BRAND_GOLD_DEEP" \
     -blur 0x${blur_hi} \
     \( +clone -alpha extract \
        -fill black -colorize 100 \
@@ -131,7 +143,7 @@ add_branding() {
     || { _branding_cleanup; return 1; }
   rm -f "$tmp_avatar" "$tmp_disc"
 
-  magick -background none -fill white \
+  magick -background none -fill "$BRAND_FG" \
     -font "JetBrainsMono-NF-Bold" -pointsize "$font_size" \
     label:"$name" "$tmp_text" || { _branding_cleanup; return 1; }
 
@@ -155,7 +167,7 @@ add_branding() {
   local extend=$(( strip_h + 24 * scale / 1000 ))
   local off_x=$(( 18 * scale / 1000 ))
   local off_y=$(( 12 * scale / 1000 ))
-  magick "$file" -gravity South -background '#1a1b2e' -splice "0x${extend}" "$file"
+  magick "$file" -gravity South -background "$BRAND_SURFACE" -splice "0x${extend}" "$file"
   magick "$file" "$tmp_brand" -gravity SouthEast -geometry "+${off_x}+${off_y}" -composite "$tmp_out" \
     || { _branding_cleanup; return 1; }
   mv "$tmp_out" "$file"
@@ -171,14 +183,14 @@ add_title_post() {
   # --- Pango markup: escape XML chars, then convert *word* to purple spans ---
   # ImageMagick's XML layer decodes entities before passing to pango markup,
   # so double-escaping is required: & -> &amp;amp;  < -> &amp;lt;  > -> &amp;gt;
-  # Wrap words in *...* for purple highlight (#bb9af7). * is not an XML char
+  # Wrap words in *...* for the gold accent. * is not an XML char
   # so it survives escaping, then the last sed pass converts it to span tags.
   local safe_text
   safe_text=$(printf '%s' "$text" | \
     sed -e 's/&/\&amp;amp;/g' \
         -e 's/</\&amp;lt;/g' \
         -e 's/>/\&amp;gt;/g' \
-        -e "s/\*\([^*]*\)\*/<span foreground='#bb9af7'>\1<\/span>/g")
+        -e "s/\*\([^*]*\)\*/<span foreground='${BRAND_GOLD}'>\1<\/span>/g")
 
   # --- Geometry constants ---
   local text_w=1000
@@ -186,7 +198,7 @@ add_title_post() {
 
   # --- Pango markup: text only (quote bar drawn separately) ---
   local pango_markup
-  pango_markup="<span font='Space Grotesk SemiBold ${font_size}' foreground='#c0caf5'>${safe_text}</span>"
+  pango_markup="<span font='Space Grotesk SemiBold ${font_size}' foreground='${BRAND_FG}'>${safe_text}</span>"
 
   # --- Temp files ---
   local tmp_bg tmp_text
@@ -210,10 +222,17 @@ add_title_post() {
   # =========================================================
   # PHASE B: Build background canvas
   # =========================================================
+  # Near-black gradients band badly once a social platform re-encodes the upload
+  # to JPEG, so a light gray noise layer is overlaid to break up the quantisation
+  # steps. Keep the noise in sRGB: desaturating it (-colorspace Gray, -modulate
+  # 100,0) writes a grayscale background, and compositing the gold text onto a
+  # grayscale base silently strips the accent and the emoji to gray.
   magick -size "${w}x${h}" xc: \
     -sparse-color Shepards \
-      "0,0 #1a1b2e  ${w},${h} #24283b  $((w/2)),$((h/2)) #1e2030" \
+      "0,0 $BRAND_BG  ${w},${h} $BRAND_GRAD_HI  $((w/2)),$((h/2)) $BRAND_GRAD_MID" \
     -blur 0x40 \
+    \( +clone -fill '#808080' -colorize 100 -attenuate 0.9 +noise Gaussian \) \
+    -compose Overlay -composite -colorspace sRGB -type TrueColor \
     "$tmp_bg" || return 1
 
   # =========================================================
@@ -229,7 +248,7 @@ add_title_post() {
   local bar_y=$(( (h - text_block_h) / 2 ))
   local bar_y2=$(( bar_y + text_block_h - 1 ))
   magick "$output" \
-    -fill '#7aa2f7' \
+    -fill "$BRAND_GOLD" \
     -draw "rectangle ${bar_x},${bar_y} $((bar_x + bar_w - 1)),${bar_y2}" \
     "$output" || return 1
 

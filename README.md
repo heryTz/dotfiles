@@ -15,6 +15,20 @@
 | Muted | `#565f89` |
 | Urgent | `#f7768e` |
 
+## gold palette (future)
+
+| Role | Color |
+|---|---|
+| Background | `#0a0a0b` |
+| Background alt | `#161618` |
+| Selected bg | `#18181b` |
+| Foreground | `#f4f4f5` |
+| Accent gold | `#f0c238` |
+| Accent gold deep | `#daa216` |
+| Border | `#282829` |
+| Muted | `#a1a1aa` |
+| Urgent | `#ef4343` |
+
 ## UI Style
 
 **Terminal-Core / TUI aesthetic** — every UI element follows terminal design principles.
