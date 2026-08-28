@@ -69,7 +69,8 @@
   border-left: 1px solid #3b4261;
 }
 
-#language {
+/* Pomodoro module renders nothing when its exec is broken, so cpu needs its own separator */
+#cpu {
   border-left: 1px solid #3b4261;
 }
 
