@@ -26,7 +26,7 @@ onboarding = false
 # red = "#ff6188"
 # green = "#a6e3a1"
 
-name = "catppuccin"
+name = "tokyo-night"
 auto_switch = false
 [terminal]
 # Executable used for new interactive panes.
@@ -176,7 +176,14 @@ focus_agent = "prefix+alt+1..9"        # optional indexed binding, e.g. "prefix+
 # pane_borders = true
 
 # Keep split panes visually separated instead of sharing divider borders.
-# pane_gaps = true
+pane_gaps = false
+
+# Draw borders along the outside edge of the pane area. Kept on (even with
+# pane_gaps disabled) so the layout doesn't shift when a new pane is added.
+pane_outer_borders = false
+
+# Place the desktop tab row above or below the terminal panes.
+tab_bar_position = "bottom"
 
 # Show detected/reported agent labels in split pane borders when no manual pane name is set.
 # show_agent_labels_on_pane_borders = false
