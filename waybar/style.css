@@ -27,6 +27,9 @@
 #custom-arch-logo,
 #workspaces,
 #custom-uptime,
+#cpu,
+#memory,
+#disk,
 #clock,
 #custom-pomodoro,
 #language,
@@ -91,6 +94,9 @@
 
 /* --- Hover (color only, no background change) --- */
 #custom-uptime:hover,
+#cpu:hover,
+#memory:hover,
+#disk:hover,
 #clock:hover,
 #custom-pomodoro:hover,
 #language:hover,
