@@ -17,6 +17,7 @@
 !/herdr
 /herdr/*
 !/herdr/config.toml
+!/tomat
 !Makefile
 !.my-zshrc
 !README.md

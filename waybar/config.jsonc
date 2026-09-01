@@ -15,7 +15,7 @@
     "clock"
   ],
   "modules-right": [
-    "custom/pomodoro",
+    "custom/tomat",
     "cpu",
     "memory",
     "disk",
@@ -97,10 +97,11 @@
     "interval": 5
   },
   "disk": {
-    "format": "󰋊 {free}",
+    "format": "󰋊 {specific_free:.0f}GB",
+    "unit": "GB",
     "path": "/",
     "tooltip": true,
-    "tooltip-format": "{free} free / {total} ({percentage_used}% used)",
+    "tooltip-format": "{specific_free:.0f}GB free / {specific_total:.0f}GB ({percentage_used}% used)",
     "interval": 30
   },
   "backlight": {
@@ -155,13 +156,6 @@
     "on-click": "sh -c '(sleep 0s; hyprlock)' & disown",
     "format": "󰌾"
   },
-  "custom/pomodoro": {
-    "format": "{}",
-    "return-type": "json",
-    "exec": "waybar-module-pomodoro --no-work-icons",
-    "on-click": "waybar-module-pomodoro toggle",
-    "on-click-right": "waybar-module-pomodoro reset"
-  },
   "hyprland/language": {
     "format": "{short}",
     "tooltip": true
@@ -170,5 +164,14 @@
     "format": "󰐥",
     "tooltip": "Power menu",
     "on-click": "~/.config/rofi/rofi-power"
+  },
+  "custom/tomat": {
+    "exec": "tomat status",
+    "interval": 1,
+    "return-type": "json",
+    "format": "{}",
+    "on-click": "tomat toggle",
+    "on-click-right": "tomat skip",
+    "on-click-middle": "tomat stop"
   }
 }

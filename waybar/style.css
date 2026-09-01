@@ -27,11 +27,11 @@
 #custom-arch-logo,
 #workspaces,
 #custom-uptime,
+#custom-tomat,
 #cpu,
 #memory,
 #disk,
 #clock,
-#custom-pomodoro,
 #language,
 #bluetooth,
 #network,
@@ -69,8 +69,8 @@
   border-left: 1px solid #3b4261;
 }
 
-/* Pomodoro module renders nothing when its exec is broken, so cpu needs its own separator */
-#cpu {
+/* Edge: leftmost module of the right group — separator against the centered clock */
+#custom-tomat {
   border-left: 1px solid #3b4261;
 }
 
@@ -111,10 +111,39 @@
   color: #7aa2f7;
 }
 
-/* --- Pomodoro States --- */
-#custom-pomodoro.work,
-#custom-pomodoro.break {
-  color: #7aa2f7;
+/* --- Tomat States --- */
+/* Dark text: the default light label (#c0caf5) has near-zero contrast on these pastel backgrounds */
+#custom-tomat.work,
+#custom-tomat.work-paused,
+#custom-tomat.break,
+#custom-tomat.break-paused,
+#custom-tomat.long-break,
+#custom-tomat.long-break-paused {
+  color: #1f2335;
+}
+
+#custom-tomat.work {
+  background-color: #ff6b6b;
+}
+
+#custom-tomat.work-paused {
+  background-color: #ff9999;
+}
+
+#custom-tomat.break {
+  background-color: #4ecdc4;
+}
+
+#custom-tomat.break-paused {
+  background-color: #7dd3db;
+}
+
+#custom-tomat.long-break {
+  background-color: #45b7d1;
+}
+
+#custom-tomat.long-break-paused {
+  background-color: #74c0db;
 }
 
 /* --- Bluetooth --- */
