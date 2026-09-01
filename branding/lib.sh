@@ -5,7 +5,7 @@
 # Monochrome base plus a single gold accent; there is deliberately no second hue.
 BRAND_BG="#0a0a0b"       # background
 BRAND_SURFACE="#161618"  # card, used for the footer band
-BRAND_LIFT="#202023"     # neutral backdrop lift, keeps drop shadows readable
+BRAND_LIFT="#2a2a30"     # neutral backdrop lift, keeps the card visibly elevated
 BRAND_FG="#f4f4f5"       # foreground
 BRAND_GOLD="#f0c238"     # accent (dark-mode gold)
 BRAND_GOLD_DEEP="#daa216" # accent, light-mode gold; shades the avatar ring
@@ -18,11 +18,15 @@ BRAND_GRAD_MID="#141417" # post background gradient, midpoint
 BRAND_FONT_IM="Geist-Mono-Bold"  # badge name, via ImageMagick label:
 BRAND_FONT_PANGO="Geist Bold"    # post headline, via pango markup
 
-# Round corners of an image in-place to match Hyprland rounding = 6.
+# Round corners of an image in-place to match Hyprland rounding = 6, and add a
+# hairline rim-light around the edge. The screenshot content is usually a dark
+# theme close in luminance to the branded background, so a black drop shadow
+# alone doesn't read; a light stroke is a contrast-independent edge cue that
+# always separates the card from what's behind it.
 # Args: <file.png>
 round_corners() {
   local file="$1" r=6
-  local tmp
+  local tmp w h
   tmp=$(mktemp /tmp/rounded_XXXXXX.png)
   trap 'rm -f "$tmp"' RETURN
   magick "$file" \
@@ -33,6 +37,13 @@ round_corners() {
     \) \
     -alpha off -compose CopyOpacity -composite \
     "$tmp"
+
+  w=$(magick identify -format "%w" "$tmp")
+  h=$(magick identify -format "%h" "$tmp")
+  magick "$tmp" -fill none -stroke "rgba(255,255,255,0.14)" -strokewidth 1 \
+    -draw "roundrectangle 0.5,0.5,$((w - 1)).5,$((h - 1)).5,$r,$r" \
+    "$tmp"
+
   mv "$tmp" "$file"
 }
 
@@ -46,7 +57,7 @@ add_gradient_bg() {
 
   magick \
     \( "$input" -bordercolor none -border 30 \) \
-    \( +clone -background black -shadow 80x20+0+15 \) \
+    \( +clone -background black -shadow 85x30+0+18 \) \
     +swap -background none -layers merge +repage \
     "$shadowfile"
 
@@ -59,7 +70,7 @@ add_gradient_bg() {
   hh=$((h / 2))
   magick -size "${w}x${h}" xc: \
     -sparse-color Shepards \
-      "0,0 $BRAND_BG  ${w},0 $BRAND_BG  ${hw},0 $BRAND_LIFT  ${hw},${hh} #1c1c1f  0,${h} $BRAND_BG  ${w},${h} $BRAND_SURFACE" \
+      "0,0 $BRAND_BG  ${w},0 $BRAND_BG  ${hw},0 $BRAND_LIFT  ${hw},${hh} #2c2c30  0,${h} $BRAND_BG  ${w},${h} $BRAND_SURFACE" \
     -blur 0x50 \
     "$shadowfile" -gravity center -composite \
     "$output"
