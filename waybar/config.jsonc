@@ -48,7 +48,7 @@
       "off": "󰂲",
       "connected": "󰂱"
     },
-    "on-click": "alacritty --class bluetui -e bluetui",
+    "on-click": "ghostty --class=bluetui -e bluetui",
     "tooltip-format-connected": "{device_enumerate}"
   },
   "custom/music": {
