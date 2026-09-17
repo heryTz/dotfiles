@@ -19,8 +19,7 @@ M.setup = function(params)
 					globalPlugins = {
 						{
 							name = "@vue/typescript-plugin",
-							location = registry_path
-								.. "/node_modules/@vue/language-server",
+							location = registry_path .. "/node_modules/@vue/language-server",
 							languages = { "vue" },
 							configNamespace = "typescript",
 						},

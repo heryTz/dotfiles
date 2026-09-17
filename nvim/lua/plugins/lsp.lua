@@ -8,6 +8,8 @@ local lsp = {
 	"jsonls",
 	"biome",
 	"denols",
+	--TODO: does not support `bun:test`
+	-- "tsc",
 }
 
 return {
