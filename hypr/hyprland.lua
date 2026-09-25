@@ -237,7 +237,7 @@ hl.bind(
 )
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle-float.sh"))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("~/.config/rofi/rofi-power"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("~/.config/rofi/rofi-clipboard"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("brave"))
