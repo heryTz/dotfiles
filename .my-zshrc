@@ -3,7 +3,7 @@ zstyle ':completion:*' completer _complete _complete:-fuzzy _correct _approximat
 zstyle ':completion:*:parameters' extra-verbose no
 
 alias lzd='lazydocker'
-alias nvim-lazy='NVIM_APPNAME=nvim-lazy nvim'
+alias nvim-12='NVIM_APPNAME=nvim-12 nvim'
 alias gfp='git fetch origin --prune'
 alias p='pnpm'
 alias doc='docker compose'
@@ -13,72 +13,15 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export HOMEBREW_NO_AUTO_UPDATE=1
 
 export PATH="$PATH:$HOME/prog/third/silicon"
-export PATH="$PATH:$HOME/prog/third/phpcs"
-export PATH="$PATH:$HOME/prog/third/nvim-macos-X86_64/bin"
-export PATH="$PATH:$HOME/prog/third/dagger"
-export PATH="$PATH:$HOME/prog/third/llvm-project/build/bin"
-export PATH="$PATH:$HOME/prog/third/go/bin"
 
 export NVIM_REGISTRY="$HOME/prog/third/nvim-registry"
 export PATH="$PATH:$NVIM_REGISTRY/node/node_modules/.bin"
-
-export PATH="$PATH:$HOME/prog/third/LLVM-19.1.7-Linux-X64/bin"
 
 export GOPATH="$HOME/prog/go"
 export PATH="$PATH:$HOME/prog/go/bin"
 
 export CHROME_EXECUTABLE="/usr/bin/brave"
-export PATH="$PATH:$HOME/prog/third/flutter/bin"
 
+export APPLICATION_SUPPORT="$HOME/Library/Application Support"
+export PATH="$PATH:$APPLICATION_SUPPORT/bob/nvim-bin"
 export PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
-
-pp() {
-  local project
-  project=$(find ~/prog -mindepth 2 -maxdepth 2 -type d \
-    | sed "s|$HOME/prog/||" \
-    | fzf --prompt="project: ")
-  [[ -z "$project" ]] && return
-
-  local session_name
-  session_name=$(basename "$project")
-  local project_path="$HOME/prog/$project"
-
-  if tmux has-session -t "$session_name" 2>/dev/null; then
-    tmux attach-session -t "$session_name"
-  else
-    # initial pane is 1.1 (pane-base-index 1)
-    tmux new-session -d -s "$session_name" -c "$project_path"
-    # split-window -h keeps original as 1.1 (left), new pane is 1.2 (right)
-    tmux split-window -h -t "$session_name:1.1" -c "$project_path"
-    # launch nvim in left pane
-    tmux send-keys -t "$session_name:1.1" "nvim" Enter
-    # set focus to left pane so attach lands in nvim
-    tmux select-pane -t "$session_name:1.1"
-    tmux attach-session -t "$session_name"
-  fi
-}
-
-pps() {
-  local project
-  project=$(find ~/prog/streamer -mindepth 1 -maxdepth 1 -type d \
-    | xargs -I{} basename {} \
-    | fzf --prompt="streamer: ")
-  [[ -z "$project" ]] && return
-
-  local session_name="$project"
-  local project_path="$HOME/prog/streamer/$project"
-
-  if tmux has-session -t "$session_name" 2>/dev/null; then
-    tmux attach-session -t "$session_name"
-  else
-    # initial pane is 1.1 (pane-base-index 1)
-    tmux new-session -d -s "$session_name" -c "$project_path"
-    # split-window -h keeps original as 1.1 (left), new pane is 1.2 (right)
-    tmux split-window -h -t "$session_name:1.1" -c "$project_path"
-    # launch nvim in left pane
-    tmux send-keys -t "$session_name:1.1" "nvim" Enter
-    # set focus to left pane so attach lands in nvim
-    tmux select-pane -t "$session_name:1.1"
-    tmux attach-session -t "$session_name"
-  fi
-}
