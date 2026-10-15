@@ -1,6 +1,7 @@
 /*
 !.gitignore
 !/nvim
+!/nvim-12
 !/nvchad
 !/alacritty
 !/zellij
