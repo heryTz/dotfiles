@@ -15,11 +15,11 @@ vim.opt.termguicolors = true
 vim.opt.foldlevelstart = 99
 
 vim.schedule(function()
-	vim.opt.clipboard = "unnamedplus"
+  vim.opt.clipboard = "unnamedplus"
 end)
 
 vim.g.markdown_fenced_languages = {
-	"ts=typescript",
+  "ts=typescript",
 }
 
 -- keymaps

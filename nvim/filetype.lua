@@ -1,14 +1,14 @@
 vim.filetype.add({
-	extension = {
-		gotmpl = "gotmpl",
-	},
-	pattern = {
-		[".*/templates/.*%.tpl"] = "helm",
-		[".*/templates/.*%.ya?ml"] = "helm",
-		["helmfile.*%.ya?ml"] = "helm",
-		[".env.*"] = "sh",
-	},
-	filename = {
-		["env-example"] = "sh",
-	},
+  extension = {
+    gotmpl = "gotmpl",
+  },
+  pattern = {
+    [".*/templates/.*%.tpl"] = "helm",
+    [".*/templates/.*%.ya?ml"] = "helm",
+    ["helmfile.*%.ya?ml"] = "helm",
+    [".env.*"] = "sh",
+  },
+  filename = {
+    ["env-example"] = "sh",
+  },
 })

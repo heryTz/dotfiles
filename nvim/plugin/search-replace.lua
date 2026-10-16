@@ -1,10 +1,10 @@
 vim.pack.add({
-	"https://github.com/MagicDuck/grug-far.nvim",
+  "https://github.com/MagicDuck/grug-far.nvim",
 })
 
 local grug = require("grug-far")
 grug.setup({})
 
 vim.keymap.set("n", "<leader>sr", function()
-	grug.toggle_instance({ instanceName = "far", staticTitle = "Search and Replace" })
+  grug.toggle_instance({ instanceName = "far", staticTitle = "Search and Replace" })
 end, { silent = true })
