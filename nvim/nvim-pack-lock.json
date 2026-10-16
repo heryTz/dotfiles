@@ -57,6 +57,11 @@
       "rev": "59ce0acf79e1d930756ef3a7cb4c2369560cf548",
       "src": "https://github.com/echasnovski/mini.surround"
     },
+    "multicursor.nvim": {
+      "rev": "c574bfc1f7e63dfea3e64b8453c9f7c660127238",
+      "src": "https://github.com/jake-stewart/multicursor.nvim",
+      "version": "'1.0'"
+    },
     "nvim-bufdel": {
       "rev": "523d58e94e7212fff3e05c247b962dc8f93bcfde",
       "src": "https://github.com/ojroques/nvim-bufdel"
