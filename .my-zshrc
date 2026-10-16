@@ -3,8 +3,6 @@ zstyle ':completion:*' completer _complete _complete:-fuzzy _correct _approximat
 zstyle ':completion:*:parameters' extra-verbose no
 
 alias lzd='lazydocker'
-# alias nvim-12='NVIM_APPNAME=nvim-12 nvim'
-alias nvim-12='NVIM_APPNAME=nvim-12 $HOME/Library/Application\ Support/bob/v0.12.6/bin/nvim'
 alias gfp='git fetch origin --prune'
 alias p='pnpm'
 alias doc='docker compose'

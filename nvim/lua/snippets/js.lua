@@ -1,6 +1,5 @@
 local ls = require("luasnip")
-
-local str = require("../util/string")
+local str = require("str")
 
 local s = ls.snippet
 local t = ls.text_node

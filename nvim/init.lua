@@ -1,34 +1,33 @@
-require("vim-options")
-require("vim-keymaps")
-require("vim-autocmd")
-require("vim-filetype")
+-- options
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+vim.opt.expandtab = true
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.cursorline = true
+vim.opt.breakindent = true
+vim.opt.undofile = true
+vim.opt.termguicolors = true
+-- unfold all by default but keep treesitter folding
+vim.opt.foldlevelstart = 99
 
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		vim.api.nvim_echo({
-			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
-			{ "\nPress any key to exit..." },
-		}, true, {})
-		vim.fn.getchar()
-		os.exit(1)
-	end
-end
-vim.opt.rtp:prepend(lazypath)
+vim.schedule(function()
+	vim.opt.clipboard = "unnamedplus"
+end)
 
-require("lazy").setup({
-	checker = {
-		enabled = true,
-		notify = false,
-	},
-	spec = {
-		{ import = "plugins" },
-	},
-	install = {},
-	git = {
-		timeout = 600,
-	},
-})
+vim.g.markdown_fenced_languages = {
+	"ts=typescript",
+}
+
+-- keymaps
+vim.keymap.set("i", "<C-c>", "<Esc>")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+vim.keymap.set("n", "<leader>wh", ":split<CR>", { silent = true })
+vim.keymap.set("n", "<leader>wv", ":vsplit<CR>", { silent = true })
+vim.keymap.set("n", "<leader>wd", ":close<CR>", { silent = true })
