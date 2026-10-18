@@ -1,7 +1,13 @@
 vim.pack.add({
   "https://github.com/lewis6991/gitsigns.nvim",
-  "https://github.com/nvim-lua/plenary.nvim",
-  "https://github.com/kdheepak/lazygit.nvim",
+  "https://github.com/neogitorg/neogit",
 })
 
-vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<cr>", { silent = true })
+require("neogit").setup({
+  disable_context_highlighting = true,
+  highlight = {
+    italic = false,
+  },
+})
+
+vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>", { silent = true })
