@@ -24,3 +24,5 @@ export CHROME_EXECUTABLE="/usr/bin/brave"
 export APPLICATION_SUPPORT="$HOME/Library/Application Support"
 export PATH="$PATH:$APPLICATION_SUPPORT/bob/nvim-bin"
 export PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
+
+source "$HOME/.config/scripts/ggone.zsh"
