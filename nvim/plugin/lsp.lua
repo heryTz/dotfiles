@@ -40,7 +40,6 @@ local lsp = {
   "gopls",
   "jsonls",
   "biome",
-  "denols",
   --TODO: does not support `bun:test` then remove `vtsls`
   -- "tsc",
 }
