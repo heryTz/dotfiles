@@ -5,6 +5,12 @@ vim.pack.add({
 
 require("oil").setup({
   use_default_keymaps = false,
+  columns = {
+    "icon",
+    "permissions",
+    "size",
+    "mtime",
+  },
   keymaps = {
     ["ov"] = { "actions.select", opts = { vertical = true, split = "botright" } },
     ["oh"] = { "actions.select", opts = { horizontal = true } },
