@@ -36,6 +36,8 @@ treesitter.install({
   "go",
   "c",
   "astro",
+  "markdown",
+  "markdown_inline",
 })
 
 vim.api.nvim_create_autocmd("FileType", {

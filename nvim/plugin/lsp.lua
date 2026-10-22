@@ -36,7 +36,6 @@ local lsp = {
   "tailwindcss",
   "eslint",
   "cssls",
-  "css_variables",
   "gopls",
   "jsonls",
   "biome",
@@ -54,7 +53,7 @@ for _, lsp_name in ipairs(lsp) do
 end
 
 -- typescript
-local registry_path = vim.fn.expand("~/prog/third/nvim-registry/node")
+local registry_path = (vim.env.NVIM_REGISTRY or vim.fn.stdpath("config") .. "/registry") .. "/js"
 vim.lsp.config("vtsls", {
   capabilities = capabilities,
   settings = {

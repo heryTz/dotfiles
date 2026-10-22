@@ -11,10 +11,8 @@ alias b='bun'
 export XDG_CONFIG_HOME="$HOME/.config"
 export HOMEBREW_NO_AUTO_UPDATE=1
 
-export PATH="$PATH:$HOME/prog/third/silicon"
-
-export NVIM_REGISTRY="$HOME/prog/third/nvim-registry"
-export PATH="$PATH:$NVIM_REGISTRY/node/node_modules/.bin"
+export NVIM_REGISTRY="$XDG_CONFIG_HOME/nvim/registry"
+export PATH="$PATH:$NVIM_REGISTRY/js/node_modules/.bin"
 
 export GOPATH="$HOME/prog/go"
 export PATH="$PATH:$HOME/prog/go/bin"
