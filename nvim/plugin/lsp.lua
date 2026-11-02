@@ -53,29 +53,11 @@ for _, lsp_name in ipairs(lsp) do
 end
 
 -- typescript
-local registry_path = (vim.env.NVIM_REGISTRY or vim.fn.stdpath("config") .. "/registry") .. "/js"
 vim.lsp.config("vtsls", {
   capabilities = capabilities,
-  settings = {
-    vtsls = {
-      tsserver = {
-        globalPlugins = {
-          {
-            name = "@vue/typescript-plugin",
-            location = registry_path .. "/node_modules/@vue/language-server",
-            languages = { "vue" },
-            configNamespace = "typescript",
-          },
-        },
-      },
-    },
-  },
-  filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
+  filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact" },
 })
-vim.lsp.config("vue_ls", {
-  capabilities = capabilities,
-})
-vim.lsp.enable({ "vtsls", "vue_ls" })
+vim.lsp.enable({ "vtsls" })
 
 -- keymaps
 vim.api.nvim_create_autocmd("LspAttach", {
