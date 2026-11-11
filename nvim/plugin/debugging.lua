@@ -27,53 +27,52 @@ dap.adapters.nlua = function(callback, config)
 end
 
 -- JavaScript
----@diagnostic disable-next-line: missing-fields
--- require("dap-vscode-js").setup({
--- 	debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
--- 	adapters = { "pwa-node" },
--- })
---
--- local js_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
---
--- for _, js_language in ipairs(js_filetypes) do
--- 	dap.configurations[js_language] = {
--- 		{
--- 			type = "pwa-node",
--- 			request = "launch",
--- 			name = "Launch file",
--- 			program = "${file}",
--- 			cwd = "${workspaceFolder}",
--- 		},
--- 		{
--- 			type = "pwa-node",
--- 			request = "attach",
--- 			name = "Attach to process",
--- 			processId = require("dap.utils").pick_process,
--- 			cwd = "${workspaceFolder}",
--- 		},
--- 		{
--- 			type = "pwa-node",
--- 			name = "Launch via npm",
--- 			request = "launch",
--- 			cwd = "${workspaceFolder}",
--- 			runtimeExecutable = "npm",
--- 			runtimeArgs = {
--- 				"run-script",
--- 				"debug",
--- 			},
--- 		},
--- 		{
--- 			type = "pwa-node",
--- 			name = "Launch via tsx",
--- 			request = "launch",
--- 			cwd = "${workspaceFolder}",
--- 			runtimeExecutable = "tsx",
--- 			runtimeArgs = {
--- 				"${file}",
--- 			},
--- 		},
--- 	}
--- end
+local js_dap_debug_server = (vim.env.NVIM_REGISTRY or vim.fn.stdpath("config") .. "/registry")
+  .. "/js-debug/src/dapDebugServer.js"
+
+dap.adapters["pwa-node"] = {
+  type = "server",
+  host = "localhost",
+  port = "${port}",
+  executable = {
+    command = "node",
+    args = { js_dap_debug_server, "${port}" },
+  },
+}
+
+local js_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
+for _, filetype in ipairs(js_filetypes) do
+  dap.configurations[filetype] = {
+    {
+      type = "pwa-node",
+      request = "launch",
+      name = "Launch file",
+      program = "${file}",
+      cwd = "${workspaceFolder}",
+    },
+    {
+      type = "pwa-node",
+      request = "attach",
+      name = "Attach to process",
+      processId = require("dap.utils").pick_process,
+      cwd = "${workspaceFolder}",
+    },
+    {
+      type = "pwa-node",
+      request = "launch",
+      name = "Launch via tsx",
+      cwd = "${workspaceFolder}",
+      runtimeExecutable = "tsx",
+      runtimeArgs = {
+        "${file}",
+      },
+    },
+  }
+end
+
+-- More information about vscode dap configurations
+-- https://github.com/microsoft/vscode-js-debug/blob/main/OPTIONS.md
+-- https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_launch-configuration-attributes
 
 ---keymaps
 vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
