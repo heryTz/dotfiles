@@ -11,10 +11,10 @@ local dapui = require("dapui")
 
 dapui.setup()
 
--- go
+-- [go]
 require("dap-go").setup()
 
--- lua
+-- [lua]
 dap.configurations.lua = {
   {
     type = "nlua",
@@ -26,7 +26,7 @@ dap.adapters.nlua = function(callback, config)
   callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8086 })
 end
 
--- JavaScript
+-- [javascript]
 local js_dap_debug_server = (vim.env.NVIM_REGISTRY or vim.fn.stdpath("config") .. "/registry")
   .. "/js-debug/src/dapDebugServer.js"
 
@@ -38,7 +38,25 @@ dap.adapters["pwa-node"] = {
     command = "node",
     args = { js_dap_debug_server, "${port}" },
   },
+  -- Do what VS Code does for js-debug: set __workspaceFolder (else outFiles is ignored)
+  -- and make `program` absolute (else program: "x.ts" isn't mapped to its compiled .js).
+  enrich_config = function(config, on_config)
+    config = vim.deepcopy(config)
+    config.__workspaceFolder = config.__workspaceFolder or vim.fn.getcwd()
+    local program = config.program
+    if type(program) == "string" and program ~= "" and not vim.startswith(program, "/") then
+      config.program = vim.fs.normalize(vim.fs.joinpath(config.cwd or config.__workspaceFolder, program))
+    end
+    on_config(config)
+  end,
 }
+
+-- vscode use "type": "node"
+dap.adapters["node"] = function(cb, config)
+  config.type = "pwa-node"
+  ---@diagnostic disable-next-line: param-type-mismatch
+  cb(dap.adapters["pwa-node"])
+end
 
 local js_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
 for _, filetype in ipairs(js_filetypes) do
@@ -56,16 +74,6 @@ for _, filetype in ipairs(js_filetypes) do
       name = "Attach to process",
       processId = require("dap.utils").pick_process,
       cwd = "${workspaceFolder}",
-    },
-    {
-      type = "pwa-node",
-      request = "launch",
-      name = "Launch via tsx",
-      cwd = "${workspaceFolder}",
-      runtimeExecutable = "tsx",
-      runtimeArgs = {
-        "${file}",
-      },
     },
   }
 end
