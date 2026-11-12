@@ -91,4 +91,21 @@ for (const t of missingGo) {
 step("JS language servers");
 await $`bun install --frozen-lockfile`.cwd(REGISTRY);
 
+// 5. js debug adapter
+const jsDebugServer = `${import.meta.dir}/registry/js-debug/src/dapDebugServer.js`;
+const hasJsDebug = await Bun.file(jsDebugServer).exists();
+step(`JS debug adapter (${hasJsDebug ? 0 : 1} missing)`);
+if (!hasJsDebug) {
+  const res = await fetch(
+    "https://api.github.com/repos/microsoft/vscode-js-debug/releases/latest",
+  );
+  if (!res.ok) {
+    console.error(`Failed to fetch js-debug release: ${res.status}`);
+    process.exit(1);
+  }
+  const { tag_name } = await res.json();
+  const url = `https://github.com/microsoft/vscode-js-debug/releases/download/${tag_name}/js-debug-dap-${tag_name}.tar.gz`;
+  await $`curl -fsSL ${url} | tar -xz -C ${import.meta.dir}/registry`;
+}
+
 step("Done.");
