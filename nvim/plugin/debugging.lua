@@ -11,10 +11,11 @@ local dapui = require("dapui")
 
 dapui.setup()
 
--- [go]
+-- Go {{{
 require("dap-go").setup()
+-- }}}
 
--- [lua]
+-- Lua {{{
 dap.configurations.lua = {
   {
     type = "nlua",
@@ -25,12 +26,27 @@ dap.configurations.lua = {
 dap.adapters.nlua = function(callback, config)
   callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8086 })
 end
+-- }}}
 
--- [javascript]
+-- JavaScript / TypeScript {{{
 local js_dap_debug_server = (vim.env.NVIM_REGISTRY or vim.fn.stdpath("config") .. "/registry")
   .. "/js-debug/src/dapDebugServer.js"
 
-dap.adapters["pwa-node"] = {
+local function playwright_chromium()
+  local is_mac = vim.uv.os_uname().sysname == "Darwin"
+  local cache = vim.env.PLAYWRIGHT_BROWSERS_PATH
+    or vim.fs.normalize(is_mac and "~/Library/Caches/ms-playwright" or "~/.cache/ms-playwright")
+  local bin = is_mac and "chrome-mac*/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    or "chrome-linux*/chrome"
+  local found = vim.fn.glob(cache .. "/chromium-*/" .. bin, false, true)
+  -- highest version wins
+  table.sort(found, function(a, b)
+    return tonumber(a:match("chromium%-(%d+)")) < tonumber(b:match("chromium%-(%d+)"))
+  end)
+  return found[#found]
+end
+
+local js_adapter = {
   type = "server",
   host = "localhost",
   port = "${port}",
@@ -47,15 +63,21 @@ dap.adapters["pwa-node"] = {
     if type(program) == "string" and program ~= "" and not vim.startswith(program, "/") then
       config.program = vim.fs.normalize(vim.fs.joinpath(config.cwd or config.__workspaceFolder, program))
     end
+    if config.type == "pwa-chrome" and config.request == "launch" and not config.runtimeExecutable then
+      config.runtimeExecutable = playwright_chromium()
+    end
     on_config(config)
   end,
 }
 
--- vscode use "type": "node"
-dap.adapters["node"] = function(cb, config)
-  config.type = "pwa-node"
-  ---@diagnostic disable-next-line: param-type-mismatch
-  cb(dap.adapters["pwa-node"])
+dap.adapters["pwa-node"] = js_adapter
+dap.adapters["pwa-chrome"] = js_adapter
+
+for vscode_type, js_type in pairs({ node = "pwa-node", chrome = "pwa-chrome" }) do
+  dap.adapters[vscode_type] = function(cb, config)
+    config.type = js_type
+    cb(js_adapter)
+  end
 end
 
 local js_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
@@ -81,16 +103,18 @@ end
 -- More information about vscode dap configurations
 -- https://github.com/microsoft/vscode-js-debug/blob/main/OPTIONS.md
 -- https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_launch-configuration-attributes
+-- }}}
 
----keymaps
+-- Keymaps {{{
 vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
 vim.keymap.set("n", "<leader>dc", dap.continue)
 vim.keymap.set("n", "<leader>dt", dap.terminate)
 vim.keymap.set("n", "<leader>dl", function()
   require("osv").launch({ port = 8086 })
 end)
+-- }}}
 
----dap bootstrap
+-- UI: open/close dap-ui with the session {{{
 dap.listeners.before.attach.dapui_config = function()
   dapui.open()
 end
@@ -103,3 +127,4 @@ end
 dap.listeners.before.event_exited.dapui_config = function()
   dapui.close()
 end
+-- }}}

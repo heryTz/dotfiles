@@ -48,6 +48,13 @@ Adjusts to fit your needs.
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

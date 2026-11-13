@@ -108,4 +108,19 @@ if (!hasJsDebug) {
   await $`curl -fsSL ${url} | tar -xz -C ${import.meta.dir}/registry`;
 }
 
+// 6. browser for js-debug (Chrome for Testing, via Playwright)
+const playwrightCache =
+  Bun.env.PLAYWRIGHT_BROWSERS_PATH ??
+  (process.platform === "darwin"
+    ? `${Bun.env.HOME}/Library/Caches/ms-playwright`
+    : `${Bun.env.HOME}/.cache/ms-playwright`);
+const hasChromium =
+  (await Array.fromAsync(
+    new Bun.Glob("chromium-*").scan({ cwd: playwrightCache, onlyFiles: false }),
+  ).catch(() => [])).length > 0;
+step(`Playwright Chromium (${hasChromium ? 0 : 1} missing)`);
+if (!hasChromium) {
+  await $`bunx playwright install chromium --no-shell`;
+}
+
 step("Done.");
